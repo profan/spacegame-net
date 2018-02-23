@@ -30,7 +30,7 @@ func start_session():
 	session.set_name("session")
 	return session
 
-func close_connection():
+func close_session():
 	Net.close_connection()
 	if session != null:
 		remove_child(session)

@@ -20,7 +20,7 @@ func _on_start_btn():
 
 func _on_cancel_btn():
 	SceneSwitcher.goto_scene(Game.Scenes.MAIN)
-	Game.close_connection()
+	Game.close_session()
 
 func _ready():
 	
@@ -94,7 +94,7 @@ func _unhandled_input(event):
 	if event is InputEventKey:
 		if event.is_action("ui_cancel"):
 			SceneSwitcher.goto_scene(Game.Scenes.MAIN)
-			Game.close_connection()
+			Game.close_session()
 
 func _on_player_connect(s, id):
 	print("player connected: %d" % id)
@@ -108,4 +108,4 @@ func _on_player_disconnect(s, id):
 func _on_connection_lost(s, reason):
 	print("lost connection to server: %s" % reason)
 	SceneSwitcher.goto_scene(Game.Scenes.MAIN)
-	Game.close_connection()
+	Game.close_session()

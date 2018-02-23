@@ -6,6 +6,11 @@ enum Command {
 	MOVE_UNITS
 }
 
+# lockstep state
+var turn_number = 0
+var turn_delay = 4 # turns
+var turn_state = {}
+
 func select_units(units):
 	return {
 		type = Command.SELECT_UNITS,
@@ -32,4 +37,7 @@ func _on_player_disconnect(player):
 	pass
 
 func _fixed_process():
+	pass
+
+func _execute():
 	pass

@@ -5,7 +5,7 @@ var peer_info = {}
 
 signal on_player_connected(s, player_id)
 signal on_player_disconnected(s, player_id)
-signal on_player_sent_command(s, command)
+signal on_player_sent_command(s, player_id, command)
 signal on_connection_lost(s, reason)
 
 func _init():
@@ -41,7 +41,7 @@ remote func send_command(id, cmd):
 		rpc_id(id, "send_command", 1, cmd)
 		for pid in peer_info:
 			rpc_id(id, "send_command", pid, cmd)
-	emit_signal("on_player_sent_command", self, cmd)
+	emit_signal("on_player_sent_command", self, id, cmd)
 
 func _on_peer_connected(id):
 	pass

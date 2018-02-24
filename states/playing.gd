@@ -44,10 +44,10 @@ func send_turn_command(c):
 	# execute also for self MAYBE? HACK
 	_on_player_sent_command(session, Net.get_id(), turn_cmd)
 	
-	if typeof(turn_cmd.cmd) == TYPE_INT:
-		print("sent command: PASS_TURN for turn: %d" % (turn_number + turn_delay))
-	else:
-		print("sent command: %s for turn: %d" % [c, turn_number + turn_delay])
+	# if typeof(turn_cmd.cmd) == TYPE_INT:
+	# 	print("sent command: PASS_TURN for turn: %d" % (turn_number + turn_delay))
+	# else:
+	# 	print("sent command: %s for turn: %d" % [c, turn_number + turn_delay])
 
 func _update_debug_ui():
 	match turn_state:

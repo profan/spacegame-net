@@ -66,6 +66,7 @@ func _ready():
 	
 	# game hookup
 	game.init_state(self)
+	get_tree().paused = true
 
 func _on_player_sent_command(session, pid, cmd):
 	

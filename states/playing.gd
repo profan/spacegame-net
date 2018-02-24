@@ -88,13 +88,13 @@ func _on_player_disconnect(pid):
 func _all_turns_received(session, tid):
 	
 	var peers = session.get_players()
-	var confirmed = {}
+	var confirmed_peers = 0
 	
 	for pid in peers:
 		if turn_commands[tid].has(pid):
-			confirmed[pid] = true
+			confirmed_peers += 1
 	
-	if confirmed.size() == peers.size():
+	if confirmed_peers == peers.size():
 		return true
 	else:
 		return false

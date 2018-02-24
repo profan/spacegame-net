@@ -4,6 +4,8 @@
 
 [node name="game" type="Node"]
 
+pause_mode = 2
 script = ExtResource( 1 )
+_sections_unfolded = [ "Pause" ]
 
 

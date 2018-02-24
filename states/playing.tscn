@@ -1,25 +1,25 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://states/playing.gd" type="Script" id=1]
-[ext_resource path="res://states/game.gd" type="Script" id=2]
+[ext_resource path="res://test_game.tscn" type="PackedScene" id=2]
 
-[node name="playing" type="Node2D" index="0"]
+[node name="playing" type="Node2D"]
 
+pause_mode = 2
 script = ExtResource( 1 )
+_sections_unfolded = [ "Pause" ]
 
-[node name="game" type="Node2D" parent="." index="0"]
-
-script = ExtResource( 2 )
-
-[node name="entities" type="Node2D" parent="game" index="0"]
+[node name="test_game" parent="." index="0" instance=ExtResource( 2 )]
 
 [node name="canvas" type="CanvasLayer" parent="." index="1"]
 
+pause_mode = 2
 layer = 1
 offset = Vector2( 0, 0 )
 rotation = 0.0
 scale = Vector2( 1, 1 )
 transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+_sections_unfolded = [ "Pause" ]
 
 [node name="ui" type="Control" parent="canvas" index="0"]
 
@@ -72,7 +72,7 @@ anchor_bottom = 0.0
 margin_left = 7.0
 margin_top = 7.0
 margin_right = 87.0
-margin_bottom = 101.0
+margin_bottom = 119.0
 rect_pivot_offset = Vector2( 0, 0 )
 mouse_filter = 1
 mouse_default_cursor_shape = 0

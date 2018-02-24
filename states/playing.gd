@@ -8,7 +8,7 @@ onready var turn_delay_label = get_node("canvas/debug/metrics/labels/turn_delay"
 onready var turn_ms_label = get_node("canvas/debug/metrics/labels/turn_ms")
 
 # game scene
-onready var game = get_node("game")
+onready var game = get_node("test_game")
 
 const PASS_TURN = -1
 
@@ -67,7 +67,7 @@ func _on_player_sent_command(session, pid, cmd):
 	if not cmd.has("turn"):
 		printerr("INVALID COMMAND, DIDN'T CONTAIN TURN!")
 		return
-		
+	
 	if not turn_commands.has(cmd.turn):
 		turn_commands[cmd.turn] = {}
 	
@@ -96,6 +96,8 @@ func _all_turns_received(session, tid):
 
 func _physics_process(delta):
 	
+	var state_changed = false
+	
 	match turn_state:
 		
 		RUNNING:
@@ -116,6 +118,7 @@ func _physics_process(delta):
 					_execute()
 				else:
 					turn_state = TurnState.WAITING
+					state_changed = true
 			
 			turn_part += 1
 			if turn_part == turn_length - 1:
@@ -134,8 +137,19 @@ func _physics_process(delta):
 			# if all players have sent their turn command for given turn, switch to running
 			if _all_turns_received(session, turn_number):
 				turn_state = TurnState.RUNNING
+				state_changed = true
 			
 	_update_debug_ui()
+	
+	# check if time to pause
+	if state_changed:
+		if turn_state == TurnState.RUNNING:
+			get_tree().paused = false
+			print("UNPAUSE")
+		elif turn_state == TurnState.WAITING:
+			get_tree().paused = true
+			print("PAUSE")
+	
 
 func _execute():
 	
@@ -144,7 +158,7 @@ func _execute():
 	for pid in turn_cmds:
 		var cmds = turn_cmds[pid]
 		for cmd in cmds:
-			if not typeof(cmd.cmd) == TYPE_INT or cmd.cmd != PASS_TURN:
+			if typeof(cmd) != TYPE_INT:
 				emit_signal("on_exec_turn_command", cmd.cmd)
 	
 	# clear turn and its commands

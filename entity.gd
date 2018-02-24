@@ -6,8 +6,9 @@ var has_order = false
 var move_target = Vector2()
 var move_speed = 2 # pixels per.. tick?
 var move_dir = Vector2(1, 0)
+var id
 
-func id():
+func get_id():
 	return name
 
 func _ready():

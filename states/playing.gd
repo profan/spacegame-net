@@ -20,7 +20,7 @@ enum TurnState {
 
 var turn_part = 0
 var turn_number = -1
-var turn_length = 4 # ticks
+var turn_length = 12 # ticks
 
 var turn_delay = 1 # turns
 var turn_state = TurnState.WAITING
@@ -42,9 +42,7 @@ func send_queued_commands():
 		# send to self locally first always
 		_on_player_sent_command(session, Net.get_id(), t)
 		
-		
 	turn_queue.clear()
-	
 
 func send_turn_command(c):
 	
@@ -54,6 +52,19 @@ func send_turn_command(c):
 	}
 	
 	turn_queue.append(turn_cmd)
+
+func _send_turn_command(c):
+	
+	var turn_cmd = {
+		turn = turn_number + turn_delay,
+		cmd = c
+	}
+	
+	var session = Game.get_session()
+	session.rpc("send_command", Net.get_id(), turn_cmd)
+	
+	# send to self locally first always
+	# _on_player_sent_command(session, Net.get_id(), turn_cmd)
 	
 	# if typeof(turn_cmd.cmd) == TYPE_INT:
 	# 	print("sent command: PASS_TURN for turn: %d" % (turn_number + turn_delay))
@@ -138,6 +149,9 @@ func _physics_process(delta):
 			var session = Game.get_session()
 			var peers = session.get_players()
 			
+			if turn_part + 1 == turn_length - 1:
+				_check_pass_turn()
+			
 			# if all players have not sent their turn command, switch to waiting
 			if turn_part == 0:
 				if _all_turns_received(session, turn_number):
@@ -152,8 +166,6 @@ func _physics_process(delta):
 					send_queued_commands()
 					turn_number += 1
 					turn_part = 0
-			
-			_check_pass_turn()
 			
 		WAITING:
 			

@@ -18,7 +18,8 @@ func _on_body_entered(b):
 	if not selected_entities:
 		selected_entities = []
 	
-	selected_entities.append(b)
+	if not selected_entities.has(b):
+		selected_entities.append(b)
 
 func _on_body_exited(b):
 	selected_entities.erase(b)

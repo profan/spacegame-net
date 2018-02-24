@@ -29,6 +29,9 @@ func move_entities(ents, x, y):
 
 var manager
 
+# entity ids
+var id_counter = -1
+
 func init_state(m):
 	m.connect("on_exec_turn_command", self, "_on_exec_turn_command")
 	manager = m
@@ -45,7 +48,7 @@ func _on_action_perform(bodies, x, y):
 	
 	var ids = []
 	for b in bodies:
-		ids.append(b.id())
+		ids.append(b.name)
 	
 	var move_order = move_entities(ids, x, y)
 	manager.send_turn_command(move_order)
@@ -53,11 +56,17 @@ func _on_action_perform(bodies, x, y):
 func _on_server_lost(session, reason):
 	SceneSwitcher.goto_scene(Game.Scenes.MAIN)
 	Game.close_session()
+	
+func _fresh_id():
+	id_counter += 1
+	return id_counter
 
 func _on_exec_turn_command(c):
 	match c.type:
 		CREATE_ENTITY:
+			var new_id = _fresh_id()
 			var new_ent = Entity.instance()
+			new_ent.name = str(new_id)
 			ents.add_child(new_ent)
 			new_ent.position.x = c.x
 			new_ent.position.y = c.y

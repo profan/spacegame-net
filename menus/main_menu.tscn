@@ -2,7 +2,7 @@
 
 [ext_resource path="res://menus/main_menu.gd" type="Script" id=1]
 
-[node name="main_menu" type="Control"]
+[node name="main_menu" type="Control" index="0"]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -37,7 +37,7 @@ anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_right = 960.0
-margin_bottom = 314.0
+margin_bottom = 292.0
 rect_pivot_offset = Vector2( 0, 0 )
 mouse_filter = 0
 mouse_default_cursor_shape = 0
@@ -73,9 +73,9 @@ anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 448.0
-margin_top = 314.0
-margin_right = 512.0
+margin_left = 427.0
+margin_top = 292.0
+margin_right = 533.0
 margin_bottom = 720.0
 rect_pivot_offset = Vector2( 0, 0 )
 mouse_filter = 1
@@ -91,7 +91,7 @@ anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_right = 64.0
+margin_right = 106.0
 margin_bottom = 20.0
 rect_pivot_offset = Vector2( 0, 0 )
 focus_mode = 2
@@ -103,19 +103,58 @@ toggle_mode = false
 enabled_focus_mode = 2
 shortcut = null
 group = null
-text = "Lobby"
+text = "Start Lobby"
 flat = false
 align = 1
 
-[node name="connect_btn" type="Button" parent="split/buttons" index="1"]
+[node name="top_sep" type="HSeparator" parent="split/buttons" index="1"]
 
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_top = 24.0
-margin_right = 64.0
-margin_bottom = 44.0
+margin_right = 106.0
+margin_bottom = 28.0
+rect_pivot_offset = Vector2( 0, 0 )
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+
+[node name="connect_addr" type="LineEdit" parent="split/buttons" index="2"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_top = 32.0
+margin_right = 106.0
+margin_bottom = 56.0
+rect_pivot_offset = Vector2( 0, 0 )
+focus_mode = 2
+mouse_filter = 0
+mouse_default_cursor_shape = 1
+size_flags_horizontal = 1
+size_flags_vertical = 1
+text = "84.216.225.78"
+expand_to_text_length = true
+focus_mode = 2
+context_menu_enabled = true
+placeholder_alpha = 0.6
+caret_blink = false
+caret_blink_speed = 0.65
+caret_position = 0
+
+[node name="connect_btn" type="Button" parent="split/buttons" index="3"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_top = 60.0
+margin_right = 106.0
+margin_bottom = 80.0
 rect_pivot_offset = Vector2( 0, 0 )
 focus_mode = 2
 mouse_filter = 0
@@ -130,15 +169,30 @@ text = "Connect"
 flat = false
 align = 1
 
-[node name="options_btn" type="Button" parent="split/buttons" index="2"]
+[node name="bottom_sep" type="HSeparator" parent="split/buttons" index="4"]
 
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_top = 48.0
-margin_right = 64.0
-margin_bottom = 68.0
+margin_top = 84.0
+margin_right = 106.0
+margin_bottom = 88.0
+rect_pivot_offset = Vector2( 0, 0 )
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+
+[node name="options_btn" type="Button" parent="split/buttons" index="5"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_top = 92.0
+margin_right = 106.0
+margin_bottom = 112.0
 rect_pivot_offset = Vector2( 0, 0 )
 focus_mode = 2
 mouse_filter = 0
@@ -153,15 +207,15 @@ text = "Options"
 flat = false
 align = 1
 
-[node name="quit_btn" type="Button" parent="split/buttons" index="3"]
+[node name="quit_btn" type="Button" parent="split/buttons" index="6"]
 
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_top = 72.0
-margin_right = 64.0
-margin_bottom = 92.0
+margin_top = 116.0
+margin_right = 106.0
+margin_bottom = 136.0
 rect_pivot_offset = Vector2( 0, 0 )
 focus_mode = 2
 mouse_filter = 0

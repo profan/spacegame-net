@@ -154,7 +154,11 @@ func _physics_process(delta):
 			var peers = session.get_players()
 			
 			# always send a PASS command, as a turn marker, even if nothing else is sent
-			send_turn_command(pass_turn())
+			if not turn_commands.has(turn_number + turn_delay):
+				send_turn_command(pass_turn())
+			elif turn_commands.has(turn_number + turn_delay):
+				if not turn_commands[turn_number + turn_delay].has(Net.get_id()):
+					send_turn_command(pass_turn())
 			
 			# if all players have not sent their turn command, switch to waiting
 			if turn_part == 0:
@@ -170,7 +174,7 @@ func _physics_process(delta):
 			
 		TurnState.WAITING:
 			
-			if turn_number == -1: 
+			if turn_number == -1:
 				send_turn_command(pass_turn())
 				turn_number = 0
 			

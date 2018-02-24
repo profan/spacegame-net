@@ -44,7 +44,7 @@ func send_queued_commands():
 		
 	turn_queue.clear()
 
-func send_turn_command(c):
+func _send_turn_command(c):
 	
 	var turn_cmd = {
 		turn = turn_number + turn_delay,
@@ -53,7 +53,7 @@ func send_turn_command(c):
 	
 	turn_queue.append(turn_cmd)
 
-func _send_turn_command(c):
+func send_turn_command(c):
 	
 	var turn_cmd = {
 		turn = turn_number + turn_delay,
@@ -118,6 +118,7 @@ func _on_server_lost(session, reason):
 
 func _all_turns_received(session, tid):
 	
+	var adjustment = -1 if not Net.is_server() else 0
 	var peers = session.get_players()
 	var confirmed_peers = 0
 	
@@ -125,7 +126,7 @@ func _all_turns_received(session, tid):
 		if turn_commands[tid].has(pid):
 			confirmed_peers += 1
 	
-	if confirmed_peers == peers.size():
+	if confirmed_peers == peers.size() + adjustment:
 		return true
 	else:
 		return false
@@ -163,15 +164,16 @@ func _physics_process(delta):
 			if turn_state == TurnState.RUNNING:
 				turn_part += 1
 				if turn_part == turn_length - 1:
-					send_queued_commands()
+					# send_queued_commands()
 					turn_number += 1
 					turn_part = 0
+				
 			
 		WAITING:
 			
 			if turn_number == -1:
 				send_turn_command(pass_turn())
-				send_queued_commands()
+				# send_queued_commands()
 				turn_number = 0
 			
 			var session = Game.get_session()

@@ -39,11 +39,8 @@ remote func register_player(id, info):
 			rpc_id(id, "register_player", pid, peer_info[pid])
 	emit_signal("on_player_connected", self, id)
 
-remote func send_command(id, cmd):
-	if Net.is_server():
-		rpc_id(id, "send_command", 1, cmd)
-		for pid in peer_info:
-			rpc_id(id, "send_command", pid, cmd)
+sync func send_command(id, cmd):
+	print("got cmd: %s" % cmd)
 	emit_signal("on_player_sent_command", self, id, cmd)
 
 func _on_peer_connected(id):

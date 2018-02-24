@@ -14,7 +14,7 @@ func _unhandled_input(event):
 	if event is InputEventKey:
 		if event.is_action("ui_cancel"):
 			SceneSwitcher.goto_scene(from_scene_name)
-			Game.close_connection()
+			Game.close_session()
 
 func _on_connection_successful():
 	SceneSwitcher.goto_scene(Game.Scenes.LOBBY)

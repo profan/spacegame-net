@@ -20,7 +20,7 @@ enum TurnState {
 
 var turn_part = 0
 var turn_number = -1
-var turn_length = 4 # ticks
+var turn_length = 12 # ticks
 
 var turn_delay = 1 # turns
 var turn_state = TurnState.WAITING
@@ -56,7 +56,7 @@ func _update_debug_ui():
 	turn_id_label.text = "turn_id: %d" % turn_number
 	turn_part_label.text = "turn_part: %d" % turn_part
 	turn_delay_label.text = "turn_delay: %d" % turn_delay
-	turn_ms_label.text = "turn_ms: %f" % (turn_length * (Engine.iterations_per_second / 1000.0) * 1000.0)
+	turn_ms_label.text = "turn_ms: %f" % (turn_length * (1000.0 / Engine.iterations_per_second))
 
 func _ready():
 	var session = Game.get_session()

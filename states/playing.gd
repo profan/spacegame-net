@@ -5,17 +5,26 @@ onready var turn_state_label = get_node("canvas/debug/metrics/labels/turn_state"
 onready var turn_id_label = get_node("canvas/debug/metrics/labels/turn_id")
 onready var turn_part_label = get_node("canvas/debug/metrics/labels/turn_part")
 onready var turn_delay_label = get_node("canvas/debug/metrics/labels/turn_delay")
+onready var turn_ms_label = get_node("canvas/debug/metrics/labels/turn_ms")
+
+# game scene
+onready var ents = get_node("entities")
+
+# object stuff
+var Entity = load("res://entity.tscn")
 
 enum Command {
 	PASS,
 	SELECT_UNITS,
-	MOVE_UNITS
+	MOVE_UNITS,
+	# debug
+	CREATE_ENTITY
 }
 
 # lockstep state
 enum TurnState {
 	RUNNING,
-	WAITING	
+	WAITING
 }
 
 var turn_part = 0
@@ -48,8 +57,25 @@ func move_units(units, x, y):
 		y = y
 	}
 
+func create_entity(x, y):
+	return {
+		type = Command.CREATE_ENTITY,
+		x = x,
+		y = y
+	}
+
 func exec_turn_command(c):
-	pass
+	match c.type:
+		PASS: pass
+		MOVE_UNITS:
+			pass
+		SELECT_UNITS:
+			pass
+		CREATE_ENTITY:
+			var new_ent = Entity.instance()
+			ents.add_child(new_ent)
+			new_ent.position.x = c.x
+			new_ent.position.y = c.y
 
 func send_turn_command(c):
 	
@@ -71,12 +97,20 @@ func _update_debug_ui():
 	turn_id_label.text = "turn_id: %d" % turn_number
 	turn_part_label.text = "turn_part: %d" % turn_part
 	turn_delay_label.text = "turn_delay: %d" % turn_delay
+	turn_ms_label.text = "turn_ms: %f" % (turn_length * (Engine.iterations_per_second / 1000.0) * 1000.0)
 
 func _ready():
 	var session = Game.get_session()
 	session.connect("on_player_sent_command", self, "_on_player_sent_command")
 	session.connect("on_player_disconnected", self, "_on_player_disconnect")
 	set_physics_process(true)
+
+func _input(event):
+	if event is InputEventMouseButton:
+		if event.is_action_pressed("mouse_left"):
+			var mouse_pos = get_global_mouse_position()
+			var create_ent_cmd = create_entity(mouse_pos.x, mouse_pos.y)
+			send_turn_command(create_ent_cmd)
 
 func _on_player_sent_command(session, pid, cmd):
 	
@@ -156,7 +190,7 @@ func _execute():
 	for pid in turn_cmds:
 		var cmds = turn_cmds[pid]
 		for cmd in cmds:
-			exec_turn_command(cmd)
+			exec_turn_command(cmd.cmd)
 	
 	# clear turn and its commands
 	turn_commands.erase(turn_number)

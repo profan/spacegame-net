@@ -24,7 +24,12 @@ func init_state(m):
 	manager = m
 
 func _ready():
-	pass
+	var session = Game.get_session()
+	session.connect("on_connection_lost", self, "_on_server_lost")
+
+func _on_server_lost(session, reason):
+	SceneSwitcher.goto_scene(Game.Scenes.MAIN)
+	Game.close_session()
 
 func _on_exec_turn_command(c):
 	match c.type:

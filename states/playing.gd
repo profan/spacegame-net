@@ -62,6 +62,7 @@ func _ready():
 	var session = Game.get_session()
 	session.connect("on_player_sent_command", self, "_on_player_sent_command")
 	session.connect("on_player_disconnected", self, "_on_player_disconnect")
+	session.connect("on_connection_lost", self, "_on_server_lost")
 	set_physics_process(true)
 	
 	# game hookup
@@ -80,10 +81,17 @@ func _on_player_sent_command(session, pid, cmd):
 	if not turn_commands[cmd.turn].has(pid):
 		turn_commands[cmd.turn][pid] = []
 	
-	turn_commands[cmd.turn][pid].append(cmd)
+	var cmds = turn_commands[cmd.turn][pid]
+	if cmds.size() == 1 and typeof(cmds[0]) == TYPE_INT:
+		turn_commands[cmd.turn][pid][0] = cmd
+	else:
+		turn_commands[cmd.turn][pid].append(cmd)
 	
 
-func _on_player_disconnect(pid):
+func _on_player_disconnect(session, pid):
+	pass
+
+func _on_server_lost(session, reason):
 	pass
 
 func _all_turns_received(session, tid):
@@ -119,10 +127,6 @@ func _physics_process(delta):
 			var session = Game.get_session()
 			var peers = session.get_players()
 			
-			# always send a PASS turn, if nothing else is sent to mark the turn
-			if turn_part + 1 == turn_length - 1:
-				_check_pass_turn()
-			
 			# if all players have not sent their turn command, switch to waiting
 			if turn_part == 0:
 				if _all_turns_received(session, turn_number):
@@ -136,6 +140,8 @@ func _physics_process(delta):
 				if turn_part == turn_length - 1:
 					turn_number += 1
 					turn_part = 0
+			
+			_check_pass_turn()
 			
 		WAITING:
 			

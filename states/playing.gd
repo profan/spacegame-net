@@ -25,11 +25,22 @@ var turn_length = 4 # ticks
 var turn_delay = 1 # turns
 var turn_state = TurnState.WAITING
 var turn_commands = {}
+var turn_queue = []
 
 signal on_exec_turn_command(cmd)
 
 func pass_turn():
 	return PASS_TURN
+	
+func send_queued_commands():
+	
+	var session = Game.get_session()
+	
+	for t in turn_queue:
+		session.rpc("send_command", Net.get_id(), t)
+		
+	turn_queue.clear()
+	
 
 func send_turn_command(c):
 	
@@ -38,11 +49,7 @@ func send_turn_command(c):
 		cmd = c
 	}
 	
-	var session = Game.get_session()
-	session.rpc("send_command", Net.get_id(), turn_cmd)
-	
-	# execute also for self MAYBE? HACK
-	_on_player_sent_command(session, Net.get_id(), turn_cmd)
+	turn_queue.append(turn_cmd)
 	
 	# if typeof(turn_cmd.cmd) == TYPE_INT:
 	# 	print("sent command: PASS_TURN for turn: %d" % (turn_number + turn_delay))
@@ -140,6 +147,8 @@ func _physics_process(delta):
 				if turn_part == turn_length - 1:
 					turn_number += 1
 					turn_part = 0
+			
+			if turn_part == 0: send_queued_commands()
 			
 			_check_pass_turn()
 			

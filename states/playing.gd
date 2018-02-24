@@ -39,6 +39,10 @@ func send_queued_commands():
 	for t in turn_queue:
 		session.rpc("send_command", Net.get_id(), t)
 		
+		# send to self locally first always
+		_on_player_sent_command(session, Net.get_id(), t)
+		
+		
 	turn_queue.clear()
 	
 
@@ -48,11 +52,6 @@ func send_turn_command(c):
 		turn = turn_number + turn_delay,
 		cmd = c
 	}
-	
-	var session = Game.get_session()
-	
-	# send to self locally first always
-	_on_player_sent_command(session, Net.get_id(), turn_cmd)
 	
 	turn_queue.append(turn_cmd)
 	
@@ -150,10 +149,9 @@ func _physics_process(delta):
 			if turn_state == TurnState.RUNNING:
 				turn_part += 1
 				if turn_part == turn_length - 1:
+					send_queued_commands()
 					turn_number += 1
 					turn_part = 0
-			
-			if turn_part == 0: send_queued_commands()
 			
 			_check_pass_turn()
 			
@@ -161,6 +159,7 @@ func _physics_process(delta):
 			
 			if turn_number == -1:
 				send_turn_command(pass_turn())
+				send_queued_commands()
 				turn_number = 0
 			
 			var session = Game.get_session()

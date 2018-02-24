@@ -43,6 +43,11 @@ func send_turn_command(c):
 	
 	# execute also for self MAYBE? HACK
 	_on_player_sent_command(session, Net.get_id(), turn_cmd)
+	
+	if typeof(turn_cmd.cmd) == TYPE_INT:
+		print("sent command: PASS_TURN for turn: %d" % (turn_number + turn_delay))
+	else:
+		print("sent command: %s for turn: %d" % [c, turn_number + turn_delay])
 
 func _update_debug_ui():
 	match turn_state:
@@ -94,6 +99,14 @@ func _all_turns_received(session, tid):
 	else:
 		return false
 
+func _check_pass_turn():
+	# always send a PASS command, as a turn marker, if nothing else is sent
+	if not turn_commands.has(turn_number + turn_delay):
+		send_turn_command(pass_turn())
+	elif turn_commands.has(turn_number + turn_delay):
+		if not turn_commands[turn_number + turn_delay].has(Net.get_id()):
+			send_turn_command(pass_turn())
+
 func _physics_process(delta):
 	
 	var state_changed = false
@@ -105,12 +118,9 @@ func _physics_process(delta):
 			var session = Game.get_session()
 			var peers = session.get_players()
 			
-			# always send a PASS command, as a turn marker, even if nothing else is sent
-			if not turn_commands.has(turn_number + turn_delay):
-				send_turn_command(pass_turn())
-			elif turn_commands.has(turn_number + turn_delay):
-				if not turn_commands[turn_number + turn_delay].has(Net.get_id()):
-					send_turn_command(pass_turn())
+			# always send a PASS turn, if nothing else is sent to mark the turn
+			if turn_part + 1 == turn_length - 1:
+				_check_pass_turn()
 			
 			# if all players have not sent their turn command, switch to waiting
 			if turn_part == 0:
@@ -120,10 +130,11 @@ func _physics_process(delta):
 					turn_state = TurnState.WAITING
 					state_changed = true
 			
-			turn_part += 1
-			if turn_part == turn_length - 1:
-				turn_number += 1
-				turn_part = 0
+			if turn_state == TurnState.RUNNING:
+				turn_part += 1
+				if turn_part == turn_length - 1:
+					turn_number += 1
+					turn_part = 0
 			
 		WAITING:
 			
@@ -138,7 +149,7 @@ func _physics_process(delta):
 			if _all_turns_received(session, turn_number):
 				turn_state = TurnState.RUNNING
 				state_changed = true
-			
+	
 	_update_debug_ui()
 	
 	# check if time to pause
@@ -158,7 +169,7 @@ func _execute():
 	for pid in turn_cmds:
 		var cmds = turn_cmds[pid]
 		for cmd in cmds:
-			if typeof(cmd) != TYPE_INT:
+			if typeof(cmd.cmd) != TYPE_INT:
 				emit_signal("on_exec_turn_command", cmd.cmd)
 	
 	# clear turn and its commands

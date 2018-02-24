@@ -25,6 +25,9 @@ func is_server():
 func get_host_port():
 	Net.get_host_port()
 
+func get_players():
+	return peer_info
+
 func register_myself():
 	rpc("register_player", Net.get_id(), my_info)
 

@@ -8,18 +8,9 @@ onready var turn_delay_label = get_node("canvas/debug/metrics/labels/turn_delay"
 onready var turn_ms_label = get_node("canvas/debug/metrics/labels/turn_ms")
 
 # game scene
-onready var ents = get_node("entities")
+onready var game = get_node("game")
 
-# object stuff
-var Entity = load("res://entity.tscn")
-
-enum Command {
-	PASS,
-	SELECT_UNITS,
-	MOVE_UNITS,
-	# debug
-	CREATE_ENTITY
-}
+const PASS_TURN = -1
 
 # lockstep state
 enum TurnState {
@@ -35,47 +26,10 @@ var turn_delay = 1 # turns
 var turn_state = TurnState.WAITING
 var turn_commands = {}
 
-# local
-var turn_queue = {}
+signal on_exec_turn_command(cmd)
 
 func pass_turn():
-	return {
-		type = Command.PASS
-	}
-
-func select_units(units):
-	return {
-		type = Command.SELECT_UNITS,
-		units = units
-	}
-
-func move_units(units, x, y):
-	return {
-		type = Command.MOVE_UNITS,
-		units = units,
-		x = x,
-		y = y
-	}
-
-func create_entity(x, y):
-	return {
-		type = Command.CREATE_ENTITY,
-		x = x,
-		y = y
-	}
-
-func exec_turn_command(c):
-	match c.type:
-		PASS: pass
-		MOVE_UNITS:
-			pass
-		SELECT_UNITS:
-			pass
-		CREATE_ENTITY:
-			var new_ent = Entity.instance()
-			ents.add_child(new_ent)
-			new_ent.position.x = c.x
-			new_ent.position.y = c.y
+	return PASS_TURN
 
 func send_turn_command(c):
 	
@@ -104,13 +58,9 @@ func _ready():
 	session.connect("on_player_sent_command", self, "_on_player_sent_command")
 	session.connect("on_player_disconnected", self, "_on_player_disconnect")
 	set_physics_process(true)
-
-func _input(event):
-	if event is InputEventMouseButton:
-		if event.is_action_pressed("mouse_left"):
-			var mouse_pos = get_global_mouse_position()
-			var create_ent_cmd = create_entity(mouse_pos.x, mouse_pos.y)
-			send_turn_command(create_ent_cmd)
+	
+	# game hookup
+	game.init_state(self)
 
 func _on_player_sent_command(session, pid, cmd):
 	
@@ -148,7 +98,7 @@ func _physics_process(delta):
 	
 	match turn_state:
 		
-		TurnState.RUNNING:
+		RUNNING:
 			
 			var session = Game.get_session()
 			var peers = session.get_players()
@@ -172,7 +122,7 @@ func _physics_process(delta):
 				turn_number += 1
 				turn_part = 0
 			
-		TurnState.WAITING:
+		WAITING:
 			
 			if turn_number == -1:
 				send_turn_command(pass_turn())
@@ -194,7 +144,8 @@ func _execute():
 	for pid in turn_cmds:
 		var cmds = turn_cmds[pid]
 		for cmd in cmds:
-			exec_turn_command(cmd.cmd)
+			if not typeof(cmd.cmd) == TYPE_INT or cmd.cmd != PASS_TURN:
+				emit_signal("on_exec_turn_command", cmd.cmd)
 	
 	# clear turn and its commands
 	turn_commands.erase(turn_number)

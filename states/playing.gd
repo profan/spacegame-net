@@ -49,6 +49,11 @@ func send_turn_command(c):
 		cmd = c
 	}
 	
+	var session = Game.get_session()
+	
+	# send to self locally first always
+	_on_player_sent_command(session, Net.get_id(), turn_cmd)
+	
 	turn_queue.append(turn_cmd)
 	
 	# if typeof(turn_cmd.cmd) == TYPE_INT:

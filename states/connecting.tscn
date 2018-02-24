@@ -3,7 +3,7 @@
 [ext_resource path="res://states/connecting.gd" type="Script" id=1]
 [ext_resource path="res://states/animated_label.gd" type="Script" id=2]
 
-[node name="connecting" type="Control" index="0"]
+[node name="connecting" type="Control"]
 
 anchor_left = 0.0
 anchor_top = 0.0

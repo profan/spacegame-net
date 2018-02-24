@@ -1,5 +1,11 @@
 extends Node2D
 
+# debug ui stuff
+onready var turn_state_label = get_node("canvas/debug/metrics/labels/turn_state")
+onready var turn_id_label = get_node("canvas/debug/metrics/labels/turn_id")
+onready var turn_part_label = get_node("canvas/debug/metrics/labels/turn_part")
+onready var turn_delay_label = get_node("canvas/debug/metrics/labels/turn_delay")
+
 enum Command {
 	PASS,
 	SELECT_UNITS,
@@ -13,10 +19,10 @@ enum TurnState {
 }
 
 var turn_part = 0
-var turn_number = 0
+var turn_number = -1
 var turn_length = 4 # ticks
 
-var turn_delay = 4 # turns
+var turn_delay = 1 # turns
 var turn_state = TurnState.WAITING
 var turn_commands = {}
 
@@ -55,6 +61,16 @@ func send_turn_command(c):
 	var session = Game.get_session()
 	session.rpc("send_command", Net.get_id(), turn_cmd)
 	
+	# execute also for self MAYBE? HACK
+	_on_player_sent_command(session, Net.get_id(), turn_cmd)
+
+func _update_debug_ui():
+	match turn_state:
+		RUNNING: turn_state_label.text = "turn_state: RUNNING"
+		WAITING: turn_state_label.text = "turn_state: WAITING"
+	turn_id_label.text = "turn_id: %d" % turn_number
+	turn_part_label.text = "turn_part: %d" % turn_part
+	turn_delay_label.text = "turn_delay: %d" % turn_delay
 
 func _ready():
 	var session = Game.get_session()
@@ -89,7 +105,7 @@ func _all_turns_received(session, tid):
 		if turn_commands[tid].has(pid):
 			confirmed[pid] = true
 	
-	if confirmed.size() == peers.size() + 1:
+	if confirmed.size() == peers.size():
 		return true
 	else:
 		return false
@@ -120,6 +136,10 @@ func _physics_process(delta):
 			
 		TurnState.WAITING:
 			
+			if turn_number == -1: 
+				send_turn_command(pass_turn())
+				turn_number = 0
+			
 			var session = Game.get_session()
 			var peers = session.get_players()
 			
@@ -127,6 +147,7 @@ func _physics_process(delta):
 			if _all_turns_received(session, turn_number):
 				turn_state = TurnState.RUNNING
 			
+	_update_debug_ui()
 
 func _execute():
 	

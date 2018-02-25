@@ -39,7 +39,7 @@ remote func register_player(id, info):
 			rpc_id(id, "register_player", pid, peer_info[pid])
 	emit_signal("on_player_connected", self, id)
 
-remote func send_command(id, cmd):
+sync func send_command(id, cmd):
 	print("got cmd: %s from: %d" % [cmd, id])
 	emit_signal("on_player_sent_command", self, id, cmd)
 

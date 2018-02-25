@@ -65,7 +65,7 @@ func send_turn_command(c):
 	session.rpc("send_command", Net.get_id(), turn_cmd)
 	
 	# send to self locally first always
-	_on_player_sent_command(session, Net.get_id(), turn_cmd)
+	# _on_player_sent_command(session, Net.get_id(), turn_cmd)
 	
 	# if typeof(turn_cmd.cmd) == TYPE_INT:
 	# 	print("sent command: PASS_TURN for turn: %d" % (turn_number + turn_delay))
@@ -128,7 +128,8 @@ func _all_turns_received(session, tid):
 		if pid != Net.get_id() and turn_commands[tid].has(pid):
 			confirmed_peers += 1
 	
-	# printt(peers.size(), confirmed_peers)
+	if confirmed_peers != 0:
+		printt("peers:", peers.size(), confirmed_peers)
 	
 	if confirmed_peers == peers.size() - adjustment:
 		return true
@@ -171,7 +172,6 @@ func _physics_process(delta):
 					# send_queued_commands()
 					turn_number += 1
 					turn_part = 0
-				
 			
 		WAITING:
 			

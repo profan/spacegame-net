@@ -27,7 +27,7 @@ func start_session():
 	var new_session = Session.new()
 	session = new_session
 	add_child(session)
-	session.set_name("session")
+	session.name = "session"
 	return session
 
 func close_session():

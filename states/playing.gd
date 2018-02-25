@@ -43,9 +43,14 @@ func send_queued_commands():
 		# send to self locally first always
 		_on_player_sent_command(session, Net.get_id(), t)
 		
+		if typeof(t.cmd) == TYPE_INT:
+			print("sent command: PASS_TURN for turn: %d" % (turn_number + turn_delay))
+		else:
+			print("sent command: %s for turn: %d" % [t.cmd, turn_number + turn_delay])
+			
 	turn_queue.clear()
 
-func _send_turn_command(c):
+func send_turn_command(c):
 	
 	var turn_cmd = {
 		turn = turn_number + turn_delay,
@@ -54,7 +59,7 @@ func _send_turn_command(c):
 	
 	turn_queue.append(turn_cmd)
 
-func send_turn_command(c):
+func _send_turn_command(c):
 	
 	var turn_cmd = {
 		turn = turn_number + turn_delay,
@@ -65,7 +70,7 @@ func send_turn_command(c):
 	session.rpc("send_command", Net.get_id(), turn_cmd)
 	
 	# send to self locally first always
-	# _on_player_sent_command(session, Net.get_id(), turn_cmd)
+	_on_player_sent_command(session, Net.get_id(), turn_cmd)
 	
 	# if typeof(turn_cmd.cmd) == TYPE_INT:
 	# 	print("sent command: PASS_TURN for turn: %d" % (turn_number + turn_delay))
@@ -106,10 +111,10 @@ func _on_player_sent_command(session, pid, cmd):
 		turn_commands[cmd.turn][pid] = []
 	
 	var cmds = turn_commands[cmd.turn][pid]
-	if cmds.size() == 1 and typeof(cmds[0]) == TYPE_INT:
-		turn_commands[cmd.turn][pid][0] = cmd
+	if cmds.size() >= 1 and typeof(cmd.cmd) == TYPE_INT:
+		pass # don't add a PASS then
 	else:
-		turn_commands[cmd.turn][pid].append(cmd)
+		cmds.append(cmd.cmd)
 	
 
 func _on_player_disconnect(session, pid):
@@ -125,7 +130,7 @@ func _all_turns_received(session, tid):
 	var confirmed_peers = 0
 	
 	for pid in peers:
-		if pid != Net.get_id() and turn_commands[tid].has(pid):
+		if turn_commands[tid].has(pid):
 			confirmed_peers += 1
 	
 	if confirmed_peers != 0:
@@ -169,7 +174,7 @@ func _physics_process(delta):
 			if turn_state == TurnState.RUNNING:
 				turn_part += 1
 				if turn_part == turn_length - 1:
-					# send_queued_commands()
+					send_queued_commands()
 					turn_number += 1
 					turn_part = 0
 			
@@ -177,7 +182,7 @@ func _physics_process(delta):
 			
 			if turn_number == -1:
 				send_turn_command(pass_turn())
-				# send_queued_commands()
+				send_queued_commands()
 				turn_number = 0
 			
 			var session = Game.get_session()
@@ -207,8 +212,8 @@ func _execute():
 	for pid in turn_cmds:
 		var cmds = turn_cmds[pid]
 		for cmd in cmds:
-			if typeof(cmd.cmd) != TYPE_INT:
-				emit_signal("on_exec_turn_command", cmd.cmd)
+			if typeof(cmd) != TYPE_INT:
+				emit_signal("on_exec_turn_command", cmd)
 	
 	# clear turn and its commands
 	turn_commands.erase(turn_number)

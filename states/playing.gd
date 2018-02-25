@@ -1,6 +1,7 @@
 extends Node2D
 
 # debug ui stuff
+onready var peer_id_label = get_node("canvas/debug/metrics/labels/peer_id")
 onready var turn_state_label = get_node("canvas/debug/metrics/labels/turn_state")
 onready var turn_id_label = get_node("canvas/debug/metrics/labels/turn_id")
 onready var turn_part_label = get_node("canvas/debug/metrics/labels/turn_part")
@@ -64,7 +65,7 @@ func send_turn_command(c):
 	session.rpc("send_command", Net.get_id(), turn_cmd)
 	
 	# send to self locally first always
-	# _on_player_sent_command(session, Net.get_id(), turn_cmd)
+	_on_player_sent_command(session, Net.get_id(), turn_cmd)
 	
 	# if typeof(turn_cmd.cmd) == TYPE_INT:
 	# 	print("sent command: PASS_TURN for turn: %d" % (turn_number + turn_delay))
@@ -72,6 +73,7 @@ func send_turn_command(c):
 	# 	print("sent command: %s for turn: %d" % [c, turn_number + turn_delay])
 
 func _update_debug_ui():
+	peer_id_label.text = "peer_id: %d" % Net.get_id()
 	match turn_state:
 		RUNNING: turn_state_label.text = "turn_state: RUNNING"
 		WAITING: turn_state_label.text = "turn_state: WAITING"
@@ -118,15 +120,17 @@ func _on_server_lost(session, reason):
 
 func _all_turns_received(session, tid):
 	
-	var adjustment = -1 if not Net.is_server() else 0
+	var adjustment = 1 if not Net.is_server() else 0
 	var peers = session.get_players()
 	var confirmed_peers = 0
 	
 	for pid in peers:
-		if turn_commands[tid].has(pid):
+		if pid != Net.get_id() and turn_commands[tid].has(pid):
 			confirmed_peers += 1
 	
-	if confirmed_peers == peers.size() + adjustment:
+	# printt(peers.size(), confirmed_peers)
+	
+	if confirmed_peers == peers.size() - adjustment:
 		return true
 	else:
 		return false

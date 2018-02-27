@@ -21,7 +21,7 @@ enum TurnState {
 
 var turn_part = 0
 var turn_number = -1
-var turn_length = 12 # ticks
+var turn_length = 16 # ticks
 
 var turn_delay = 1 # turns
 var turn_state = TurnState.WAITING
@@ -38,15 +38,21 @@ func send_queued_commands():
 	var session = Game.get_session()
 	
 	for t in turn_queue:
+		
+		# always send to server, even if server
+		# if Net.is_server(): session.send_command(Net.get_id(), t)
+		# else: session.rpc_id(1, "send_command", Net.get_id(), t)
 		session.rpc("send_command", Net.get_id(), t)
 		
 		# send to self locally first always
 		_on_player_sent_command(session, Net.get_id(), t)
 		
 		if typeof(t.cmd) == TYPE_INT:
-			print("sent command: PASS_TURN for turn: %d" % (turn_number + turn_delay))
+			#print("sent command: PASS_TURN for turn: %d" % (turn_number + turn_delay))
+			pass
 		else:
-			print("sent command: %s for turn: %d" % [t.cmd, turn_number + turn_delay])
+			# print("sent command: %s for turn: %d" % [t.cmd, turn_number + turn_delay])
+			pass
 			
 	turn_queue.clear()
 
@@ -100,6 +106,9 @@ func _ready():
 
 func _on_player_sent_command(session, pid, cmd):
 	
+	# print("[ID: %d] - cmd: %s calllback for pid: %d! (cmd for turn: %d)" % [Net.get_id(), cmd.cmd, pid, cmd.turn])
+	# print("[ID: %d] > peers: %s" % [Net.get_id(), session.get_players()])
+	
 	if not cmd.has("turn"):
 		printerr("INVALID COMMAND, DIDN'T CONTAIN TURN!")
 		return
@@ -130,11 +139,11 @@ func _all_turns_received(session, tid):
 	var confirmed_peers = 0
 	
 	for pid in peers:
-		if turn_commands[tid].has(pid):
+		if pid != Net.get_id() and turn_commands.has(tid) and turn_commands[tid].has(pid):
 			confirmed_peers += 1
 	
-	if confirmed_peers != 0:
-		printt("peers:", peers.size(), confirmed_peers)
+	# if confirmed_peers != 0:
+	# 	printt("[ID: %d] - peers:" % Net.get_id(), peers.size(), confirmed_peers)
 	
 	if confirmed_peers == peers.size() - adjustment:
 		return true
@@ -160,36 +169,31 @@ func _physics_process(delta):
 			var session = Game.get_session()
 			var peers = session.get_players()
 			
-			if turn_part + 1 == turn_length - 1:
+			if turn_part == turn_length - 1:
 				_check_pass_turn()
-			
-			# if all players have not sent their turn command, switch to waiting
-			if turn_part == 0:
-				if _all_turns_received(session, turn_number):
+				send_queued_commands()
+				
+				if _all_turns_received(session, turn_number + turn_delay):
 					_execute()
+					turn_number += 1
+					turn_part = 0
 				else:
 					turn_state = TurnState.WAITING
 					state_changed = true
-			
-			if turn_state == TurnState.RUNNING:
+			else:
 				turn_part += 1
-				if turn_part == turn_length - 1:
-					send_queued_commands()
-					turn_number += 1
-					turn_part = 0
 			
 		WAITING:
 			
 			if turn_number == -1:
 				send_turn_command(pass_turn())
 				send_queued_commands()
-				turn_number = 0
 			
 			var session = Game.get_session()
 			var peers = session.get_players()
 			
 			# if all players have sent their turn command for given turn, switch to running
-			if _all_turns_received(session, turn_number):
+			if _all_turns_received(session, turn_number + turn_delay):
 				turn_state = TurnState.RUNNING
 				state_changed = true
 	
@@ -207,12 +211,15 @@ func _physics_process(delta):
 
 func _execute():
 	
+	if turn_number == -1: return
+	
 	# execute all commands for turn
 	var turn_cmds = turn_commands[turn_number]
 	for pid in turn_cmds:
 		var cmds = turn_cmds[pid]
 		for cmd in cmds:
 			if typeof(cmd) != TYPE_INT:
+				# print("[ID: %d] - [T: %d] executing: %s" % [Net.get_id(), turn_number, cmd])
 				emit_signal("on_exec_turn_command", cmd)
 	
 	# clear turn and its commands

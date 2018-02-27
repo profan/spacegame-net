@@ -24,7 +24,6 @@ Net="*res://net/client.tscn"
 
 window/size/width=960
 window/size/height=720
-window/size/resizable=false
 
 [input]
 

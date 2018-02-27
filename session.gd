@@ -40,7 +40,12 @@ remote func register_player(id, info):
 	emit_signal("on_player_connected", self, id)
 
 remote func send_command(id, cmd):
-	print("[S] got cmd: %s from: %d" % [cmd, id])
+	# print("[ID: %d] - [S] got cmd: %s from: %d" % [Net.get_id(), cmd, id])
+	# if Net.is_server():
+	# 	var session = Game.get_session()
+	# 	var peers = session.get_players()
+	# 	for pid in peers:
+	# 		rpc_id(pid, "send_command", id, cmd)
 	emit_signal("on_player_sent_command", self, id, cmd)
 
 func _on_peer_connected(id):

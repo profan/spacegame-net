@@ -26,18 +26,20 @@ var turn_length = 12 # ticks
 var turn_delay = 1 # turns
 var turn_state = TurnState.WAITING
 var turn_commands = {}
-var turn_queue = []
+var turn_queue = {}
 
 signal on_exec_turn_command(cmd)
 
 func pass_turn():
 	return PASS_TURN
 	
-func send_queued_commands():
+func send_queued_commands(tid):
 	
 	var session = Game.get_session()
 	
-	for t in turn_queue:
+	if not turn_queue.has(tid): return
+	
+	for t in turn_queue[tid]:
 		
 		# always send to server, even if server
 		# if Net.is_server(): session.send_command(Net.get_id(), t)
@@ -53,17 +55,23 @@ func send_queued_commands():
 		else:
 			# print("sent command: %s for turn: %d" % [t.cmd, turn_number + turn_delay])
 			pass
-			
-	turn_queue.clear()
+	
+	turn_queue.erase(tid)
+	
 
-func send_turn_command(c):
+func send_turn_command(c, offset = 0):
+	
+	var tid = turn_number + turn_delay + offset
 	
 	var turn_cmd = {
-		turn = turn_number + turn_delay,
+		turn = tid,
 		cmd = c
 	}
 	
-	turn_queue.append(turn_cmd)
+	if not turn_queue.has(tid):
+		turn_queue[tid] = []
+	
+	turn_queue[tid].append(turn_cmd)
 
 func _send_turn_command(c):
 	
@@ -150,13 +158,13 @@ func _all_turns_received(session, tid):
 	else:
 		return false
 
-func _check_pass_turn():
+func _check_pass_turn(offset = 0):
 	# always send a PASS command, as a turn marker, if nothing else is sent
-	if not turn_commands.has(turn_number + turn_delay):
-		send_turn_command(pass_turn())
-	elif turn_commands.has(turn_number + turn_delay):
-		if not turn_commands[turn_number + turn_delay].has(Net.get_id()):
-			send_turn_command(pass_turn())
+	if not turn_commands.has(turn_number + turn_delay + offset):
+		send_turn_command(pass_turn(), offset)
+	elif turn_commands.has(turn_number + turn_delay + offset):
+		if not turn_commands[turn_number + turn_delay + offset].has(Net.get_id()):
+			send_turn_command(pass_turn(), offset)
 
 func _physics_process(delta):
 	
@@ -170,8 +178,9 @@ func _physics_process(delta):
 			var peers = session.get_players()
 			
 			if turn_part == turn_length - 1:
+				
 				_check_pass_turn()
-				send_queued_commands()
+				send_queued_commands(turn_number + turn_delay)
 				
 				if _all_turns_received(session, turn_number + turn_delay):
 					_execute()
@@ -187,7 +196,7 @@ func _physics_process(delta):
 			
 			if turn_number == -1:
 				send_turn_command(pass_turn())
-				send_queued_commands()
+				send_queued_commands(turn_number + turn_delay)
 			
 			var session = Game.get_session()
 			var peers = session.get_players()

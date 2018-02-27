@@ -21,7 +21,7 @@ enum TurnState {
 
 var turn_part = 0
 var turn_number = -1
-var turn_length = 12 # ticks
+var turn_length = 4 # ticks
 
 var turn_delay = 1 # turns
 var turn_state = TurnState.WAITING
@@ -179,8 +179,8 @@ func _physics_process(delta):
 			
 			if turn_part == turn_length - 1:
 				
-				_check_pass_turn()
-				send_queued_commands(turn_number + turn_delay)
+				_check_pass_turn(turn_delay)
+				send_queued_commands(turn_number + turn_delay*2)
 				
 				if _all_turns_received(session, turn_number + turn_delay):
 					_execute()
@@ -196,6 +196,7 @@ func _physics_process(delta):
 			
 			if turn_number == -1:
 				send_turn_command(pass_turn())
+				send_turn_command(pass_turn(), turn_delay)
 				send_queued_commands(turn_number + turn_delay)
 			
 			var session = Game.get_session()

@@ -21,7 +21,7 @@ enum TurnState {
 
 var turn_part = 0
 var turn_number = -1
-var turn_length = 16 # ticks
+var turn_length = 12 # ticks
 
 var turn_delay = 1 # turns
 var turn_state = TurnState.WAITING

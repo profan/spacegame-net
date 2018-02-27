@@ -1,5 +1,8 @@
 extends Node2D
 
+# game gui
+onready var canvas = get_node("canvas")
+
 # scenes/resources
 var Entity = load("res://entity.tscn")
 
@@ -36,6 +39,10 @@ func init_state(m):
 	m.connect("on_exec_turn_command", self, "_on_exec_turn_command")
 	manager = m
 
+func init_with_args(args):
+	var chat_panel = args[0]
+	canvas.add_child(chat_panel)
+
 func _ready():
 	
 	var session = Game.get_session()
@@ -51,7 +58,7 @@ func _on_action_perform(bodies, x, y):
 		ids.append(b.name)
 	
 	var move_order = move_entities(ids, x, y)
-	manager.send_turn_command(move_order, 1)
+	manager.send_turn_command(move_order, manager.turn_delay)
 
 func _on_server_lost(session, reason):
 	SceneSwitcher.goto_scene(Game.Scenes.MAIN)
@@ -80,4 +87,4 @@ func _input(event):
 		if event.is_action_pressed("mouse_middle"):
 			var mouse_pos = get_global_mouse_position()
 			var create_ent_cmd = create_entity(mouse_pos.x, mouse_pos.y)
-			manager.send_turn_command(create_ent_cmd, 1)
+			manager.send_turn_command(create_ent_cmd, manager.turn_delay)

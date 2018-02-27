@@ -13,10 +13,14 @@ onready var actions = get_node("menu_panel/menu_container/categories/action/acti
 onready var start_btn = get_node("menu_panel/menu_container/buttons/start_btn")
 onready var cancel_btn = get_node("menu_panel/menu_container/buttons/cancel_btn")
 
+# chat in lobby too
+onready var chat_panel = get_node("chat_panel")
+
 var from_scene_name = false
 
 func _on_start_btn():
-	SceneSwitcher.goto_scene(Game.Scenes.PLAYING)
+	remove_child(chat_panel)
+	SceneSwitcher.goto_scene(Game.Scenes.PLAYING, [chat_panel])
 
 func _on_cancel_btn():
 	SceneSwitcher.goto_scene(Game.Scenes.MAIN)

@@ -6,6 +6,7 @@ var peer_info = {}
 signal on_player_connected(s, player_id)
 signal on_player_disconnected(s, player_id)
 signal on_player_sent_command(s, player_id, command)
+signal on_player_sent_message(s, player_id, message)
 signal on_connection_lost(s, reason)
 
 func _init():
@@ -41,12 +42,10 @@ remote func register_player(id, info):
 
 remote func send_command(id, cmd):
 	# print("[ID: %d] - [S] got cmd: %s from: %d" % [Net.get_id(), cmd, id])
-	# if Net.is_server():
-	# 	var session = Game.get_session()
-	# 	var peers = session.get_players()
-	# 	for pid in peers:
-	# 		rpc_id(pid, "send_command", id, cmd)
 	emit_signal("on_player_sent_command", self, id, cmd)
+
+remote func send_message(id, msg):
+	emit_signal("on_player_sent_message", self, id, msg)
 
 func _on_peer_connected(id):
 	pass

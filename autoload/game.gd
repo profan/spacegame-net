@@ -20,6 +20,9 @@ const Scenes = {
 
 var session
 
+signal session_started
+signal session_closed
+
 func _ready():
 	pass
 
@@ -28,9 +31,11 @@ func start_session():
 	session = new_session
 	add_child(session)
 	session.name = "session"
+	emit_signal("session_started")
 	return session
 
 func close_session():
+	emit_signal("session_closed")
 	Net.close_connection()
 	if session != null:
 		remove_child(session)

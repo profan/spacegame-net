@@ -28,6 +28,7 @@ var turn_state = TurnState.WAITING
 var turn_commands = {}
 var turn_queue = {}
 
+signal on_ready()
 signal on_exec_turn_command(cmd)
 
 func pass_turn():
@@ -101,6 +102,10 @@ func _update_debug_ui():
 	turn_delay_label.text = "turn_delay: %d" % turn_delay
 	turn_ms_label.text = "turn_ms: %f" % (turn_length * (1000.0 / Engine.iterations_per_second))
 
+func init_with_args(args):
+	yield(self, "on_ready")
+	game.init_with_args(args)
+
 func _ready():
 	var session = Game.get_session()
 	session.connect("on_player_sent_command", self, "_on_player_sent_command")
@@ -111,6 +116,7 @@ func _ready():
 	# game hookup
 	game.init_state(self)
 	get_tree().paused = true
+	emit_signal("on_ready")
 
 func _on_player_sent_command(session, pid, cmd):
 	
@@ -213,10 +219,10 @@ func _physics_process(delta):
 	if state_changed:
 		if turn_state == TurnState.RUNNING:
 			get_tree().paused = false
-			print("UNPAUSE")
+			print("[ID: %d, T: %d] - UNPAUSE" % [Net.get_id(), turn_number])
 		elif turn_state == TurnState.WAITING:
 			get_tree().paused = true
-			print("PAUSE")
+			print("[ID: %d, T: %d] - PAUSE" % [Net.get_id(), turn_number])
 	
 
 func _execute():

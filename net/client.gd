@@ -70,6 +70,8 @@ func close_connection():
 	enet_peer_status = Status.Disconnected
 	enet_peer.close_connection()
 	enet_peer = null
+	
+	# deregister from tree
 	get_tree().call_deferred("set_network_peer", null)
 
 func start_server(host_ip, port, max_clients = 32):

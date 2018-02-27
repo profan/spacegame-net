@@ -65,6 +65,9 @@ func _add_label(node, naem, text):
 	node.add_child(new_label)
 	return new_label
 
+func _set_label_colour(label, colour_name):
+	label.add_color_override("font_color", ColorN(colour_name))
+
 func _add_action_button(node, naem):
 	var new_btn = OptionButton.new()
 	new_btn.set_name(str(naem))
@@ -77,9 +80,14 @@ func _type_label(id):
 	else:
 		return "C"
 
+func _set_nick_colour(nick_label, id):
+	if id == Net.get_id(): _set_label_colour(nick_label, "green")
+	else: _set_label_colour(nick_label, "fuchsia")
+
 func _register_player(id, player_info):
 	var n = player_info.nick
 	var nick = _add_label(nicks, id, n)
+	_set_nick_colour(nick, id) # colour yes
 	var ping = _add_label(pings, id, "0")
 	var type = _add_label(types, id, _type_label(id))
 	var action = _add_action_button(actions, id)

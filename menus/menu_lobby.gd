@@ -1,17 +1,17 @@
 extends Control
 
-onready var address_label = get_node("menu_panel/menu_container/top_container/address")
-onready var id_label = get_node("menu_panel/menu_container/top_container/id")
+onready var address_label = get_node("center/menu_panel/menu_container/top_container/address")
+onready var id_label = get_node("center/menu_panel/menu_container/top_container/id")
 
 # list of players
-onready var nicks = get_node("menu_panel/menu_container/categories/nick_list/nicks")
-onready var pings = get_node("menu_panel/menu_container/categories/ping/pings")
-onready var types = get_node("menu_panel/menu_container/categories/type/types")
-onready var actions = get_node("menu_panel/menu_container/categories/action/actions")
+onready var nicks = get_node("center/menu_panel/menu_container/categories/nick_list/nicks")
+onready var pings = get_node("center/menu_panel/menu_container/categories/ping/pings")
+onready var types = get_node("center/menu_panel/menu_container/categories/type/types")
+onready var actions = get_node("center/menu_panel/menu_container/categories/action/actions")
 
 # start/cancel btns
-onready var start_btn = get_node("menu_panel/menu_container/buttons/start_btn")
-onready var cancel_btn = get_node("menu_panel/menu_container/buttons/cancel_btn")
+onready var start_btn = get_node("center/menu_panel/menu_container/buttons/start_btn")
+onready var cancel_btn = get_node("center/menu_panel/menu_container/buttons/cancel_btn")
 
 # chat in lobby too
 onready var chat_panel = get_node("chat_panel")

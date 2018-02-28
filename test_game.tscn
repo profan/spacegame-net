@@ -1,20 +1,23 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://test_game.gd" type="Script" id=1]
-[ext_resource path="res://selection.gd" type="Script" id=2]
+[ext_resource path="res://camera.tscn" type="PackedScene" id=2]
+[ext_resource path="res://selection.gd" type="Script" id=3]
 
 [sub_resource type="RectangleShape2D" id=1]
 
 custom_solver_bias = 0.0
 extents = Vector2( 16, 16 )
 
-[node name="test_game" type="Node2D"]
+[node name="test_game" type="Node2D" index="0"]
 
 pause_mode = 2
 script = ExtResource( 1 )
 _sections_unfolded = [ "Pause" ]
 
-[node name="selection" type="Area2D" parent="." index="0"]
+[node name="camera" parent="." index="0" instance=ExtResource( 2 )]
+
+[node name="selection" type="Area2D" parent="." index="1"]
 
 input_pickable = true
 gravity_vec = Vector2( 0, 1 )
@@ -23,19 +26,19 @@ linear_damp = 0.1
 angular_damp = 1.0
 audio_bus_override = false
 audio_bus_name = "Master"
-script = ExtResource( 2 )
+script = ExtResource( 3 )
 
 [node name="collision" type="CollisionShape2D" parent="selection" index="0"]
 
 shape = SubResource( 1 )
 _sections_unfolded = [ "Material", "Transform", "Visibility", "Z Index" ]
 
-[node name="entities" type="Node2D" parent="." index="1"]
+[node name="entities" type="Node2D" parent="." index="2"]
 
 pause_mode = 1
 _sections_unfolded = [ "Pause" ]
 
-[node name="canvas" type="CanvasLayer" parent="." index="2"]
+[node name="canvas" type="CanvasLayer" parent="." index="3"]
 
 layer = 1
 offset = Vector2( 0, 0 )

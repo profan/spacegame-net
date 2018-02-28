@@ -26,7 +26,7 @@ func _on_body_exited(b):
 
 func _unhandled_input(event):
 	if event is InputEventMouseButton:
-		if event.is_action_pressed("mouse_left"):
+		if event.is_action_pressed("unit_select"):
 			if selected_entities: selected_entities.clear()
 			var mouse_pos = get_global_mouse_position()
 			coll.shape.extents.x = 0
@@ -34,19 +34,19 @@ func _unhandled_input(event):
 			start_pos = mouse_pos
 			global_position = mouse_pos
 			active = true
-		elif event.is_action_released("mouse_left"):
+		elif event.is_action_released("unit_select"):
 			var mouse_pos = get_global_mouse_position()
 			# var bodies = get_overlapping_bodies()
 			# selected_entities = bodies
 			end_pos = mouse_pos
 			active = false
-		elif event.is_action_pressed("mouse_right"):
+		elif event.is_action_pressed("unit_order"):
 			var mouse_pos = get_global_mouse_position()
 			if selected_entities:
 				emit_signal("on_action_perform", selected_entities, mouse_pos.x, mouse_pos.y)
 
 func _process(delta):
-	if active and Input.is_action_pressed("mouse_left"):
+	if active and Input.is_action_pressed("unit_select"):
 		end_pos = get_global_mouse_position()
 		coll.shape.extents.x = (end_pos.x - start_pos.x) / 2
 		coll.shape.extents.y = (end_pos.y - start_pos.y) / 2

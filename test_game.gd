@@ -7,6 +7,7 @@ onready var canvas = get_node("canvas")
 var Entity = load("res://entity.tscn")
 
 # local refs
+onready var camera = get_node("camera")
 onready var selector = get_node("selection")
 onready var ents = get_node("entities")
 
@@ -83,8 +84,8 @@ func _on_exec_turn_command(c):
 				e.move_to(c.x, c.y)
 
 func _input(event):
-	if event is InputEventMouseButton:
-		if event.is_action_pressed("mouse_middle"):
+	if event is InputEvent:
+		if event.is_action_pressed("unit_place"):
 			var mouse_pos = get_global_mouse_position()
 			var create_ent_cmd = create_entity(mouse_pos.x, mouse_pos.y)
 			manager.send_turn_command(create_ent_cmd, manager.turn_delay)

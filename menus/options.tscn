@@ -2,7 +2,7 @@
 
 [ext_resource path="res://menus/options.gd" type="Script" id=1]
 
-[node name="options" type="Control" index="0"]
+[node name="options" type="Control"]
 
 anchor_left = 0.0
 anchor_top = 0.0

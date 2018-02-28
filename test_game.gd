@@ -80,6 +80,7 @@ func _on_exec_turn_command(c):
 			new_ent.position.y = c.y
 		MOVE_ENTITIES:
 			for id in c.ents:
+				print("[ID: %d, T: %d] - move %s to x: %d, y: %d" % [Net.get_id(), manager.turn_number, id, c.x, c.y])
 				var e = ents.get_node(id)
 				e.move_to(c.x, c.y)
 

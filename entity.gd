@@ -30,4 +30,3 @@ func move_to(x, y):
 	has_order = true
 	move_target.x = x
 	move_target.y = y
-	print("move order to x: %d, y: %d" % [x, y])

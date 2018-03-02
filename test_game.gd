@@ -90,3 +90,6 @@ func _input(event):
 			var mouse_pos = get_global_mouse_position()
 			var create_ent_cmd = create_entity(mouse_pos.x, mouse_pos.y)
 			manager.send_turn_command(create_ent_cmd, manager.turn_delay)
+		elif event.is_action_pressed("ui_cancel"):
+			SceneSwitcher.goto_scene(Game.Scenes.MAIN)
+			Game.call_deferred("close_session")

@@ -40,6 +40,7 @@ func _unhandled_input(event):
 			# selected_entities = bodies
 			end_pos = mouse_pos
 			active = false
+			update() # redraw
 		elif event.is_action_pressed("unit_order"):
 			var mouse_pos = get_global_mouse_position()
 			if selected_entities:
@@ -51,6 +52,13 @@ func _process(delta):
 		coll.shape.extents.x = (end_pos.x - start_pos.x) / 2
 		coll.shape.extents.y = (end_pos.y - start_pos.y) / 2
 		global_position = start_pos + (end_pos - start_pos) / 2
+		
+		# redraw yes
+		update()
 
 func _draw():
-	pass
+	if active:
+		var size = end_pos - start_pos
+		var inv = get_global_transform().inverse()
+		draw_set_transform(inv.get_origin(), inv.get_rotation(), inv.get_scale())
+		draw_rect(Rect2(start_pos, size), ColorN("green", 0.25))

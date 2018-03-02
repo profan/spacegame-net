@@ -1,14 +1,22 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://menus/main_menu.gd" type="Script" id=1]
 
-[node name="main_menu" type="Control"]
+[sub_resource type="Animation" id=1]
+
+resource_name = "New Anim"
+length = 1.0
+loop = false
+step = 0.1
+
+[node name="main_menu" type="Control" index="0"]
 
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
 mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
@@ -22,6 +30,7 @@ anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
 mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
@@ -37,8 +46,9 @@ anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_right = 960.0
-margin_bottom = 292.0
+margin_bottom = 360.0
 rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
 mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 5
@@ -56,6 +66,7 @@ margin_top = -7.0
 margin_right = 512.0
 margin_bottom = 7.0
 rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
 mouse_filter = 2
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 0
@@ -74,10 +85,11 @@ anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 427.0
-margin_top = 292.0
+margin_top = 360.0
 margin_right = 533.0
 margin_bottom = 720.0
 rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
 mouse_filter = 1
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 4
@@ -94,6 +106,7 @@ anchor_bottom = 0.0
 margin_right = 106.0
 margin_bottom = 20.0
 rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
 focus_mode = 2
 mouse_filter = 0
 mouse_default_cursor_shape = 0
@@ -117,6 +130,7 @@ margin_top = 24.0
 margin_right = 106.0
 margin_bottom = 28.0
 rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
 mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
@@ -132,6 +146,7 @@ margin_top = 32.0
 margin_right = 106.0
 margin_bottom = 56.0
 rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
 focus_mode = 2
 mouse_filter = 0
 mouse_default_cursor_shape = 1
@@ -156,6 +171,7 @@ margin_top = 60.0
 margin_right = 106.0
 margin_bottom = 80.0
 rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
 focus_mode = 2
 mouse_filter = 0
 mouse_default_cursor_shape = 0
@@ -179,6 +195,7 @@ margin_top = 84.0
 margin_right = 106.0
 margin_bottom = 88.0
 rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
 mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
@@ -194,6 +211,7 @@ margin_top = 92.0
 margin_right = 106.0
 margin_bottom = 112.0
 rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
 focus_mode = 2
 mouse_filter = 0
 mouse_default_cursor_shape = 0
@@ -217,6 +235,7 @@ margin_top = 116.0
 margin_right = 106.0
 margin_bottom = 136.0
 rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
 focus_mode = 2
 mouse_filter = 0
 mouse_default_cursor_shape = 0
@@ -229,5 +248,15 @@ group = null
 text = "Quit"
 flat = false
 align = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="1"]
+
+root_node = NodePath("..")
+autoplay = ""
+playback_process_mode = 1
+playback_default_blend_time = 0.0
+playback_speed = 1.0
+"anims/New Anim" = SubResource( 1 )
+blend_times = [  ]
 
 

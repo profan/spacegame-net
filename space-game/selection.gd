@@ -12,6 +12,8 @@ var selected_entities
 
 func _ready():
 	connect("body_entered", self, "_on_body_entered")
+	coll.shape.extents.x = 0
+	coll.shape.extents.y = 0
 
 func _on_body_entered(b):
 	
@@ -25,7 +27,8 @@ func _on_body_entered(b):
 		selected_entities.append(b)
 
 func _on_body_exited(b):
-	selected_entities.erase(b)
+	if active:
+		selected_entities.erase(b)
 
 func _unhandled_input(event):
 	if event is InputEventMouseButton:
@@ -39,8 +42,8 @@ func _unhandled_input(event):
 			active = true
 		elif event.is_action_released("unit_select"):
 			var mouse_pos = get_global_mouse_position()
-			# var bodies = get_overlapping_bodies()
-			# selected_entities = bodies
+			coll.shape.extents.x = 0
+			coll.shape.extents.y = 0
 			end_pos = mouse_pos
 			active = false
 			update() # redraw

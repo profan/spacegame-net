@@ -1,5 +1,13 @@
 extends Script
 
+# can be OR'd together to produce combined behaviour, units keep a table of data and a single flag
+enum Kinematics {
+	SEEK = 0x1,
+	ARRIVE = 0x2,
+	AVOID = 0x4,
+	FLEE = 0x8
+}
+
 class Kinematic:
 	
 	var owner

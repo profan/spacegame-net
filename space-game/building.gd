@@ -11,8 +11,10 @@ func create_building(o, s):
 
 func _ready():
 	set_physics_process(true)
-	coll.shape.extents.x = building_size.x
-	coll.shape.extents.y = building_size.y
+	coll.position.x = building_size.x / 2
+	coll.position.y = building_size.y / 2
+	coll.shape.extents.x = building_size.x / 2
+	coll.shape.extents.y = building_size.y / 2
 
 func _physics_process(delta):
 	pass

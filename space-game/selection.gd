@@ -1,13 +1,22 @@
 extends Area2D
 
+enum Modifier {
+	SHIFT = 0x1,
+	ALT = 0x2
+}
+
 onready var coll = get_node("collision")
 
 var active = false
 var start_pos = Vector2()
 var end_pos = Vector2()
 
-signal on_action_perform(bodies, x, y)
+signal on_action_perform(mods, bodies, x, y)
 
+# modifier state
+var modifiers
+
+# entities selected
 var selected_entities
 
 func _ready():
@@ -30,6 +39,13 @@ func _on_body_exited(b):
 	if active:
 		selected_entities.erase(b)
 
+func _input(event):
+	if event is InputEventKey:
+		if event.is_action_pressed("unit_order_mod"):
+			modifiers = true
+		elif event.is_action_released("unit_order_mod"):
+			modifiers = false
+
 func _unhandled_input(event):
 	if event is InputEventMouseButton:
 		if event.is_action_pressed("unit_select"):
@@ -48,7 +64,7 @@ func _unhandled_input(event):
 		elif event.is_action_pressed("unit_order"):
 			var mouse_pos = get_global_mouse_position()
 			if selected_entities:
-				emit_signal("on_action_perform", selected_entities, mouse_pos.x, mouse_pos.y)
+				emit_signal("on_action_perform", modifiers, selected_entities, mouse_pos.x, mouse_pos.y)
 
 func _process(delta):
 	if active and Input.is_action_pressed("unit_select"):

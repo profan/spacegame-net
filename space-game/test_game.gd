@@ -33,12 +33,13 @@ func create_entity(x, y):
 		y = y
 	}
 
-func move_entities(ents, x, y):
+func move_entities(ents, x, y, is_grouped):
 	return {
 		type = Command.MOVE_ENTITIES,
 		ents = ents,
 		x = x,
-		y = y
+		y = y,
+		grouped = is_grouped
 	}
 
 # network
@@ -73,13 +74,13 @@ func _ready():
 	new_building.create_building(Net.get_id(), Vector2(128, 128))
 	blds.add_child(new_building)
 
-func _on_action_perform(bodies, x, y):
+func _on_action_perform(modifiers, bodies, x, y):
 	
 	var ids = []
 	for b in bodies:
 		ids.append(b.name)
 	
-	var move_order = move_entities(ids, x, y)
+	var move_order = move_entities(ids, x, y, modifiers)
 	manager.send_turn_command(move_order, manager.turn_delay)
 
 func _on_server_lost(session, reason):
@@ -106,7 +107,10 @@ func _on_exec_turn_command(pid, c):
 			for id in c.ents:
 				print("[ID: %d, T: %d] - move %s to x: %d, y: %d" % [Net.get_id(), manager.turn_number, id, c.x, c.y])
 				var e = ents.get_node(id)
-				e.move_to(c.x, c.y)
+				if c.grouped:
+					pass
+				else:
+					e.move_to(c.x, c.y)
 
 func _input(event):
 	if event is InputEvent:

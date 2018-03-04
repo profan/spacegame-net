@@ -1,7 +1,8 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://states/playing.gd" type="Script" id=1]
-[ext_resource path="res://test_game.tscn" type="PackedScene" id=2]
+[ext_resource path="res://space-game/test_game.tscn" type="PackedScene" id=2]
+
 
 [node name="playing" type="Node2D"]
 

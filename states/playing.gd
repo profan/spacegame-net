@@ -29,7 +29,7 @@ var turn_commands = {}
 var turn_queue = {}
 
 signal on_ready()
-signal on_exec_turn_command(cmd)
+signal on_exec_turn_command(pid, cmd)
 
 func pass_turn():
 	return PASS_TURN
@@ -236,7 +236,7 @@ func _execute():
 		for cmd in cmds:
 			if typeof(cmd) != TYPE_INT:
 				# print("[ID: %d] - [T: %d] executing: %s" % [Net.get_id(), turn_number, cmd])
-				emit_signal("on_exec_turn_command", cmd)
+				emit_signal("on_exec_turn_command", pid, cmd)
 	
 	# clear turn and its commands
 	turn_commands.erase(turn_number)

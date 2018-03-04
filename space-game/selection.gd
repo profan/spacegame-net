@@ -15,6 +15,9 @@ func _ready():
 
 func _on_body_entered(b):
 	
+	if not b.has_method("is_selectable_by"): return
+	if not b.is_selectable_by(Net.get_id()): return
+	
 	if not selected_entities:
 		selected_entities = []
 	

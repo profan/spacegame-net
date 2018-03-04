@@ -4,12 +4,15 @@ extends Node2D
 onready var canvas = get_node("canvas")
 
 # scenes/resources
-var Entity = load("res://entity.tscn")
+var Entity = load("res://space-game/entity.tscn")
+var SeekingEntity = load("res://space-game/seeking-entity.tscn")
+var Building = load("res://space-game/building.tscn")
 
 # local refs
 onready var camera = get_node("camera")
 onready var selector = get_node("selection")
 onready var ents = get_node("entities")
+onready var blds = get_node("buildings")
 
 enum Command {
 	CREATE_ENTITY,
@@ -51,6 +54,12 @@ func _ready():
 	
 	# selection box stuff
 	selector.connect("on_action_perform", self, "_on_action_perform")
+	
+	# create initial building yes
+	var some_owner = {colour = ColorN("fuchsia")}
+	var new_building = Building.instance()
+	new_building.create_building(some_owner, Vector2(16, 16))
+	blds.add_child(new_building)
 
 func _on_action_perform(bodies, x, y):
 	
@@ -69,12 +78,13 @@ func _fresh_id():
 	id_counter += 1
 	return id_counter
 
-func _on_exec_turn_command(c):
+func _on_exec_turn_command(pid, c):
 	match c.type:
 		CREATE_ENTITY:
 			var new_id = _fresh_id()
-			var new_ent = Entity.instance()
+			var new_ent = SeekingEntity.instance()
 			new_ent.name = str(new_id)
+			new_ent.owner_id = pid
 			ents.add_child(new_ent)
 			new_ent.position.x = c.x
 			new_ent.position.y = c.y

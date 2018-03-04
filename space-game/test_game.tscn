@@ -1,0 +1,96 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://space-game/test_game.gd" type="Script" id=1]
+[ext_resource path="res://camera.tscn" type="PackedScene" id=2]
+[ext_resource path="res://space-game/selection.gd" type="Script" id=3]
+[ext_resource path="res://space-game/raw/space.png" type="Texture" id=4]
+
+[sub_resource type="RectangleShape2D" id=1]
+
+custom_solver_bias = 0.0
+extents = Vector2( 16, 16 )
+
+[node name="test_game" type="Node2D"]
+
+pause_mode = 2
+script = ExtResource( 1 )
+_sections_unfolded = [ "Pause" ]
+
+[node name="camera" parent="." index="0" instance=ExtResource( 2 )]
+
+[node name="selection" type="Area2D" parent="." index="1"]
+
+input_pickable = true
+gravity_vec = Vector2( 0, 1 )
+gravity = 98.0
+linear_damp = 0.1
+angular_damp = 1.0
+audio_bus_override = false
+audio_bus_name = "Master"
+script = ExtResource( 3 )
+
+[node name="collision" type="CollisionShape2D" parent="selection" index="0"]
+
+shape = SubResource( 1 )
+_sections_unfolded = [ "Material", "Transform", "Visibility", "Z Index" ]
+
+[node name="buildings" type="Node2D" parent="." index="2"]
+
+[node name="entities" type="Node2D" parent="." index="3"]
+
+pause_mode = 1
+_sections_unfolded = [ "Pause" ]
+
+[node name="canvas" type="CanvasLayer" parent="." index="4"]
+
+layer = 1
+offset = Vector2( 0, 0 )
+rotation = 0.0
+scale = Vector2( 1, 1 )
+transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+
+[node name="parallax" type="ParallaxBackground" parent="." index="5"]
+
+layer = -1
+offset = Vector2( 0, 0 )
+rotation = 0.0
+scale = Vector2( 1, 1 )
+transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+scroll_offset = Vector2( 0, 0 )
+scroll_base_offset = Vector2( 0, 0 )
+scroll_base_scale = Vector2( 1, 1 )
+scroll_limit_begin = Vector2( 0, 0 )
+scroll_limit_end = Vector2( 0, 0 )
+scroll_ignore_camera_zoom = false
+
+[node name="layer_one" type="ParallaxLayer" parent="parallax" index="0"]
+
+rotation = 1.5708
+motion_scale = Vector2( 0.5, 0.5 )
+motion_offset = Vector2( 0, 0 )
+motion_mirroring = Vector2( 0, 0 )
+_sections_unfolded = [ "Motion", "Transform", "Z Index" ]
+
+[node name="bg" type="Sprite" parent="parallax/layer_one" index="0"]
+
+texture = ExtResource( 4 )
+region_enabled = true
+region_rect = Rect2( 0, 0, 8192, 8192 )
+_sections_unfolded = [ "Offset", "Region" ]
+
+[node name="layer_two" type="ParallaxLayer" parent="parallax" index="1"]
+
+modulate = Color( 1, 1, 1, 0.475137 )
+motion_scale = Vector2( 0.45, 0.45 )
+motion_offset = Vector2( 128, 128 )
+motion_mirroring = Vector2( 0, 0 )
+_sections_unfolded = [ "Material", "Motion", "Transform", "Visibility", "Z Index" ]
+
+[node name="bg" type="Sprite" parent="parallax/layer_two" index="0"]
+
+texture = ExtResource( 4 )
+region_enabled = true
+region_rect = Rect2( 0, 0, 8192, 8192 )
+_sections_unfolded = [ "Animation", "Material", "Offset", "Region", "Transform", "Visibility", "Z Index" ]
+
+

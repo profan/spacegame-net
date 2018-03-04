@@ -6,10 +6,7 @@ var has_order = false
 var move_target = Vector2()
 var move_speed = 2 # pixels per.. tick?
 var move_dir = Vector2(1, 0)
-var id
-
-func get_id():
-	return name
+var owner_id
 
 func _ready():
 	set_physics_process(true)
@@ -30,3 +27,6 @@ func move_to(x, y):
 	has_order = true
 	move_target.x = x
 	move_target.y = y
+
+func is_selectable_by(id):
+	return id == owner_id

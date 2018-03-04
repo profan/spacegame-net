@@ -2,22 +2,27 @@ extends KinematicBody2D
 
 onready var coll = get_node("collision")
 
-var building_size = Vector2(16, 16)
-var building_owner
+var owner_id
+var size
 
-func create_building(o, s):
-	building_owner = o
-	building_size = s
+func create_building(oid, s):
+	owner_id = oid
+	size = s
 
 func _ready():
 	set_physics_process(true)
-	coll.position.x = building_size.x / 2
-	coll.position.y = building_size.y / 2
-	coll.shape.extents.x = building_size.x / 2
-	coll.shape.extents.y = building_size.y / 2
+	coll.position.x = size.x / 2
+	coll.position.y = size.y / 2
+	coll.shape.extents.x = size.x / 2
+	coll.shape.extents.y = size.y / 2
 
 func _physics_process(delta):
 	pass
 
 func _draw():
-	draw_rect(Rect2(0, 0, building_size.x, building_size.y), building_owner.colour)
+	var w = coll.shape.extents.x
+	var h = coll.shape.extents.y
+	if owner_id == Net.get_id():
+		draw_rect(Rect2(0, 0, w, h), ColorN("green"), false)
+	else:
+		draw_rect(Rect2(0, 0, w, h), ColorN("fuchsia"), false)

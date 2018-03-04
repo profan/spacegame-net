@@ -42,8 +42,6 @@ func _unhandled_input(event):
 			active = true
 		elif event.is_action_released("unit_select"):
 			var mouse_pos = get_global_mouse_position()
-			coll.shape.extents.x = 0
-			coll.shape.extents.y = 0
 			end_pos = mouse_pos
 			active = false
 			update() # redraw

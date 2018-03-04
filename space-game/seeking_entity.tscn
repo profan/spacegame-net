@@ -74,7 +74,7 @@ _sections_unfolded = [ "Angle", "Angular Velocity", "Animation", "Color", "Dampi
 custom_solver_bias = 0.0
 extents = Vector2( 32, 32 )
 
-[node name="entity" type="KinematicBody2D"]
+[node name="seeking_entity" type="KinematicBody2D"]
 
 input_pickable = false
 collision_layer = 1

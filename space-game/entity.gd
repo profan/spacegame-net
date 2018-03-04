@@ -23,6 +23,14 @@ func _physics_process(delta):
 		if dist <= 16:
 			has_order = false
 
+func _draw():
+	var w = coll.shape.extents.x
+	var h = coll.shape.extents.y
+	if owner_id == Net.get_id():
+		draw_rect(Rect2(-(w / 2), -(h / 2), w, h), ColorN("green"), false)
+	else:
+		draw_rect(Rect2(-(w / 2), -(h / 2), w, h), ColorN("fuchsia"), false)
+
 func move_to(x, y):
 	has_order = true
 	move_target.x = x

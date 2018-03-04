@@ -5,7 +5,7 @@ onready var canvas = get_node("canvas")
 
 # scenes/resources
 var Entity = load("res://space-game/entity.tscn")
-var SeekingEntity = load("res://space-game/seeking-entity.tscn")
+var SeekingEntity = load("res://space-game/seeking_entity.tscn")
 var Building = load("res://space-game/building.tscn")
 
 # local refs
@@ -15,9 +15,16 @@ onready var ents = get_node("entities")
 onready var blds = get_node("buildings")
 
 enum Command {
+	REGISTER_OWNER,
 	CREATE_ENTITY,
 	MOVE_ENTITIES
 }
+
+func register_owner(id, colour):
+	return {
+		type = Command.REGISTER_OWNER,
+		id = id, colour = colour
+	}
 
 func create_entity(x, y):
 	return {
@@ -34,7 +41,11 @@ func move_entities(ents, x, y):
 		y = y
 	}
 
+# network
 var manager
+
+# game state
+var owners
 
 # entity ids
 var id_counter = -1
@@ -55,10 +66,11 @@ func _ready():
 	# selection box stuff
 	selector.connect("on_action_perform", self, "_on_action_perform")
 	
+	# manager.send_turn_command(register_owner(Net.get_id(), "fuchsia"))
+	
 	# create initial building yes
-	var some_owner = {colour = ColorN("fuchsia")}
 	var new_building = Building.instance()
-	new_building.create_building(some_owner, Vector2(16, 16))
+	new_building.create_building(Net.get_id(), Vector2(128, 128))
 	blds.add_child(new_building)
 
 func _on_action_perform(bodies, x, y):
@@ -80,9 +92,11 @@ func _fresh_id():
 
 func _on_exec_turn_command(pid, c):
 	match c.type:
+		REGISTER_OWNER:
+			owners[c.id] = c.colour
 		CREATE_ENTITY:
 			var new_id = _fresh_id()
-			var new_ent = SeekingEntity.instance()
+			var new_ent = Entity.instance()
 			new_ent.name = str(new_id)
 			new_ent.owner_id = pid
 			ents.add_child(new_ent)

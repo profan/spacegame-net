@@ -20,21 +20,23 @@ var modifiers
 var selected_entities
 
 func _ready():
+	set_physics_process(true)
 	connect("body_entered", self, "_on_body_entered")
 	coll.shape.extents.x = 0
 	coll.shape.extents.y = 0
 
 func _on_body_entered(b):
 	
-	if not b.has_method("is_selectable_by"): return
-	if not b.is_selectable_by(Net.get_id()): return
-	
-	if not selected_entities:
-		selected_entities = []
-	
-	if not selected_entities.has(b):
-		selected_entities.append(b)
-		b.select()
+	if active:
+		if not b.has_method("is_selectable_by"): return
+		if not b.is_selectable_by(Net.get_id()): return
+		
+		if not selected_entities:
+			selected_entities = []
+		
+		if not selected_entities.has(b):
+			selected_entities.append(b)
+			b.select()
 
 func _on_body_exited(b):
 	if active:
@@ -74,7 +76,7 @@ func _unhandled_input(event):
 			if selected_entities:
 				emit_signal("on_action_perform", modifiers, selected_entities, mouse_pos.x, mouse_pos.y)
 
-func _process(delta):
+func _physics_process(delta):
 	if active and Input.is_action_pressed("unit_select"):
 		end_pos = get_global_mouse_position()
 		coll.shape.extents.x = (end_pos.x - start_pos.x) / 2

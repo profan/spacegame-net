@@ -34,10 +34,16 @@ func _on_body_entered(b):
 	
 	if not selected_entities.has(b):
 		selected_entities.append(b)
+		b.select()
 
 func _on_body_exited(b):
 	if active:
 		selected_entities.erase(b)
+		b.deselect()
+
+func _deselect_entities():
+	for e in selected_entities:
+		e.deselect()
 
 func _input(event):
 	if event is InputEventKey:
@@ -49,7 +55,9 @@ func _input(event):
 func _unhandled_input(event):
 	if event is InputEventMouseButton:
 		if event.is_action_pressed("unit_select"):
-			if selected_entities: selected_entities.clear()
+			if selected_entities: 
+				_deselect_entities()
+				selected_entities.clear()
 			var mouse_pos = get_global_mouse_position()
 			coll.shape.extents.x = 0
 			coll.shape.extents.y = 0

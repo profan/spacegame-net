@@ -1,16 +1,17 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
-[ext_resource path="res://space-game/test_game.gd" type="Script" id=1]
+[ext_resource path="res://land-game/land_game.gd" type="Script" id=1]
 [ext_resource path="res://camera.tscn" type="PackedScene" id=2]
-[ext_resource path="res://space-game/selection.gd" type="Script" id=3]
-[ext_resource path="res://space-game/raw/space.png" type="Texture" id=4]
+[ext_resource path="res://land-game/selection.gd" type="Script" id=3]
+[ext_resource path="res://land-game/ui.tscn" type="PackedScene" id=4]
+[ext_resource path="res://space-game/raw/space.png" type="Texture" id=5]
 
 [sub_resource type="RectangleShape2D" id=1]
 
 custom_solver_bias = 0.0
 extents = Vector2( 16, 16 )
 
-[node name="test_game" type="Node2D"]
+[node name="land_game" type="Node2D" index="0"]
 
 pause_mode = 2
 script = ExtResource( 1 )
@@ -49,6 +50,8 @@ rotation = 0.0
 scale = Vector2( 1, 1 )
 transform = Transform2D( 1, 0, 0, 1, 0, 0 )
 
+[node name="ui" parent="canvas" index="0" instance=ExtResource( 4 )]
+
 [node name="parallax" type="ParallaxBackground" parent="." index="5"]
 
 layer = -1
@@ -73,7 +76,7 @@ _sections_unfolded = [ "Motion", "Transform", "Z Index" ]
 
 [node name="bg" type="Sprite" parent="parallax/layer_one" index="0"]
 
-texture = ExtResource( 4 )
+texture = ExtResource( 5 )
 region_enabled = true
 region_rect = Rect2( 0, 0, 8192, 8192 )
 _sections_unfolded = [ "Offset", "Region" ]
@@ -88,7 +91,7 @@ _sections_unfolded = [ "Material", "Motion", "Transform", "Visibility", "Z Index
 
 [node name="bg" type="Sprite" parent="parallax/layer_two" index="0"]
 
-texture = ExtResource( 4 )
+texture = ExtResource( 5 )
 region_enabled = true
 region_rect = Rect2( 0, 0, 8192, 8192 )
 _sections_unfolded = [ "Animation", "Material", "Offset", "Region", "Transform", "Visibility", "Z Index" ]

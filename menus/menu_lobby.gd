@@ -1,5 +1,153 @@
 extends Control
 
+const Colours = [
+	"aliceblue",
+	"antiquewhite",
+	"aqua",
+	"aquamarine",
+	"azure",
+	"beige",
+	"bisque",
+	"black",
+	"blanchedalmond",
+	"blue",
+	"blueviolet",
+	"brown",
+	"burlywood",
+	"cadetblue",
+	"chartreuse",
+	"chocolate",
+	"coral",
+	"cornflower",
+	"cornsilk",
+	"crimson",
+	"cyan",
+	"darkblue",
+	"darkcyan",
+	"darkgoldenrod",
+	"darkgray",
+	"darkgreen",
+	"darkkhaki",
+	"darkmagenta",
+	"darkolivegreen",
+	"darkorange",
+	"darkorchid",
+	"darkred",
+	"darksalmon",
+	"darkseagreen",
+	"darkslateblue",
+	"darkslategray",
+	"darkturquoise",
+	"darkviolet",
+	"deeppink",
+	"deepskyblue",
+	"dimgray",
+	"dodgerblue",
+	"firebrick",
+	"floralwhite",
+	"forestgreen",
+	"fuchsia",
+	"gainsboro",
+	"ghostwhite",
+	"gold",
+	"goldenrod",
+	"gray",
+	"webgray",
+	"green",
+	"webgreen",
+	"greenyellow",
+	"honeydew",
+	"hotpink",
+	"indianred",
+	"indigo",
+	"ivory",
+	"khaki",
+	"lavender",
+	"lavenderblush",
+	"lawngreen",
+	"lemonchiffon",
+	"lightblue",
+	"lightcoral",
+	"lightcyan",
+	"lightgoldenrod",
+	"lightgray",
+	"lightgreen",
+	"lightpink",
+	"lightsalmon",
+	"lightseagreen",
+	"lightskyblue",
+	"lightslategray",
+	"lightsteelblue",
+	"lightyellow",
+	"lime",
+	"limegreen",
+	"linen",
+	"magenta",
+	"maroon",
+	"webmaroon",
+	"mediumaquamarine",
+	"mediumblue",
+	"mediumorchid",
+	"mediumpurple",
+	"mediumseagreen",
+	"mediumslateblue",
+	"mediumspringgreen",
+	"mediumturquoise",
+	"mediumvioletred",
+	"midnightblue",
+	"mintcream",
+	"mistyrose",
+	"moccasin",
+	"navajowhite",
+	"navyblue",
+	"oldlace",
+	"olive",
+	"olivedrab",
+	"orange",
+	"orangered",
+	"orchid",
+	"palegoldenrod",
+	"palegreen",
+	"paleturquoise",
+	"palevioletred",
+	"papayawhip",
+	"peachpuff",
+	"peru",
+	"pink",
+	"plum",
+	"powderblue",
+	"purple",
+	"webpurple",
+	"rebeccapurple",
+	"red",
+	"rosybrown",
+	"royalblue",
+	"saddlebrown",
+	"salmon",
+	"sandybrown",
+	"seagreen",
+	"seashell",
+	"sienna",
+	"silver",
+	"skyblue",
+	"slateblue",
+	"slategray",
+	"snow",
+	"springgreen",
+	"steelblue",
+	"tan",
+	"teal",
+	"thistle",
+	"tomato",
+	"turquoise",
+	"violet",
+	"wheat",
+	"white",
+	"whitesmoke",
+	"yellow",
+	"yellowgreen"
+]
+
 onready var address_label = get_node("center/menu_panel/menu_container/top_container/address")
 onready var id_label = get_node("center/menu_panel/menu_container/top_container/id")
 
@@ -38,13 +186,15 @@ func _ready():
 	
 	if Net.is_server():
 		session.my_info = {
-			nick = "profan"
+			nick = "profan",
+			colour = ColorN("green")
 		}
 		_register_player(Net.get_id(), session.my_info)
 	
 	if not Net.is_server():
 		session.my_info = {
-			nick = "unknown"
+			nick = "unknown",
+			colour = ColorN(Colours[floor(rand_range(0, Colours.size()))])
 		}
 		session.connect("on_connection_lost", self, "_on_connection_lost")
 		session.register_myself()
@@ -65,8 +215,8 @@ func _add_label(node, naem, text):
 	node.add_child(new_label)
 	return new_label
 
-func _set_label_colour(label, colour_name):
-	label.add_color_override("font_color", ColorN(colour_name))
+func _set_label_colour(label, colour):
+	label.add_color_override("font_color", colour)
 
 func _add_action_button(node, naem):
 	var new_btn = OptionButton.new()
@@ -81,8 +231,9 @@ func _type_label(id):
 		return "C"
 
 func _set_nick_colour(nick_label, id):
-	if id == Net.get_id(): _set_label_colour(nick_label, "green")
-	else: _set_label_colour(nick_label, "fuchsia")
+	var session = Game.get_session()
+	if id == Net.get_id(): _set_label_colour(nick_label, session.my_info.colour)
+	else: _set_label_colour(nick_label, session.get_players()[id].colour)
 
 func _register_player(id, player_info):
 	var n = player_info.nick

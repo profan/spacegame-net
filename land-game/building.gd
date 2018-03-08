@@ -23,12 +23,12 @@ func _physics_process(delta):
 	pass
 
 func _draw():
-	
+
 	var session = Game.get_session()
-	
+
 	var w = coll.shape.extents.x
 	var h = coll.shape.extents.y
-	
+
 	if owner_id == Net.get_id():
 		draw_rect(Rect2(0, 0, w, h), session.my_info.colour, false)
 	else:

@@ -20,11 +20,20 @@ const Scenes = {
 
 var session
 
+signal match_started
+signal match_ended
+
 signal session_started
 signal session_closed
 
 func _ready():
 	pass
+
+func start_match():
+	emit_signal("match_started")
+
+func end_match():
+	emit_signal("match_ended")
 
 func start_session():
 	var new_session = Session.new()

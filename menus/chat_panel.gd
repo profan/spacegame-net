@@ -19,9 +19,9 @@ func _on_player_sent_message(s, id, msg):
 		player = peers[id]
 	
 	if id == Net.get_id():
-		chat_box.bbcode_text += "[color=green]%s[/color]: %s\n" % [player.nick, msg]
+		chat_box.bbcode_text += "[color=#%x]%s[/color]: %s\n" % [player.colour.to_argb32(), player.nick, msg]
 	else:
-		chat_box.bbcode_text += "[color=fuchsia]%s[/color]: %s\n" % [player.nick, msg]
+		chat_box.bbcode_text += "[color=#%x]%s[/color]: %s\n" % [player.colour.to_argb32(), player.nick, msg]
 
 func _on_player_send_message(msg):
 	var session = Game.get_session()

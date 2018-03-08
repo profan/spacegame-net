@@ -9,7 +9,7 @@ onready var turn_delay_label = get_node("canvas/debug/metrics/labels/turn_delay"
 onready var turn_ms_label = get_node("canvas/debug/metrics/labels/turn_ms")
 
 # game scene
-onready var game = get_node("test_game")
+onready var game = get_node("space_game")
 
 const PASS_TURN = -1
 
@@ -107,16 +107,21 @@ func init_with_args(args):
 	game.init_with_args(args)
 
 func _ready():
+	
 	var session = Game.get_session()
 	session.connect("on_player_sent_command", self, "_on_player_sent_command")
 	session.connect("on_player_disconnected", self, "_on_player_disconnect")
 	session.connect("on_connection_lost", self, "_on_server_lost")
 	set_physics_process(true)
 	
-	# game hookup
+	# tell others we're ready
 	game.init_state(self)
 	get_tree().paused = true
 	emit_signal("on_ready")
+	
+	# signal
+	Game.start_match()
+	
 
 func _on_player_sent_command(session, pid, cmd):
 	

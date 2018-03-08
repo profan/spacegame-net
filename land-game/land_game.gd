@@ -4,9 +4,9 @@ extends Node2D
 onready var canvas = get_node("canvas")
 
 # scenes/resources
-var Entity = load("res://space-game/entity.tscn")
-var SeekingEntity = load("res://space-game/seeking_entity.tscn")
-var Building = load("res://space-game/building.tscn")
+var Entity = load("res://land-game/entity.tscn")
+var SeekingEntity = load("res://land-game/seeking_entity.tscn")
+var Building = load("res://land-game/building.tscn")
 
 # local refs
 onready var camera = get_node("camera")
@@ -16,6 +16,7 @@ onready var blds = get_node("buildings")
 
 enum Command {
 	REGISTER_OWNER,
+	CREATE_INITIAL,
 	CREATE_ENTITY,
 	MOVE_ENTITIES
 }
@@ -24,6 +25,13 @@ func register_owner(id, colour):
 	return {
 		type = Command.REGISTER_OWNER,
 		id = id, colour = colour
+	}
+
+func create_initial(x, y):
+	return {
+		type = Command.CREATE_INITIAL,
+		x = x,
+		y = y
 	}
 
 func create_entity(x, y):
@@ -53,6 +61,7 @@ var id_counter = -1
 
 func init_state(m):
 	m.connect("on_exec_turn_command", self, "_on_exec_turn_command")
+	m.connect("on_ready", self, "_on_manager_ready")
 	manager = m
 
 func init_with_args(args):
@@ -60,41 +69,60 @@ func init_with_args(args):
 	canvas.add_child(chat_panel)
 
 func _ready():
-	
+
 	var session = Game.get_session()
 	session.connect("on_connection_lost", self, "_on_server_lost")
-	
+
 	# selection box stuff
 	selector.connect("on_action_perform", self, "_on_action_perform")
-	
 	# manager.send_turn_command(register_owner(Net.get_id(), "fuchsia"))
-	
-	# create initial building yes
-	var new_building = Building.instance()
-	new_building.create_building(Net.get_id(), Vector2(128, 128))
-	blds.add_child(new_building)
+
+func _on_manager_ready():
+	# send initial command
+	manager.send_turn_command(create_initial(0, 0), manager.turn_delay)
 
 func _on_action_perform(modifiers, bodies, x, y):
-	
+
 	var ids = []
 	for b in bodies:
 		ids.append(b.name)
-	
+
 	var move_order = move_entities(ids, x, y, modifiers)
 	manager.send_turn_command(move_order, manager.turn_delay)
 
 func _on_server_lost(session, reason):
 	SceneSwitcher.goto_scene(Game.Scenes.MAIN)
 	Game.close_session()
-	
+
 func _fresh_id():
 	id_counter += 1
 	return id_counter
 
 func _on_exec_turn_command(pid, c):
+
 	match c.type:
+
+		# during setup
+		CREATE_INITIAL:
+
+			# set location for host's building to 0, 0
+
+			var x = 0
+			var y = 0
+			if pid == 1:
+				x = 0
+				y = 0
+			else:
+				x = 128
+				y = 128
+			var new_building = Building.instance()
+			new_building.create_building(pid, Vector2(128, 128), Vector2(x, y))
+			blds.add_child(new_building)
+
 		REGISTER_OWNER:
 			owners[c.id] = c.colour
+
+		# during gameplay
 		CREATE_ENTITY:
 			var new_id = _fresh_id()
 			var new_ent = Entity.instance()
@@ -103,6 +131,7 @@ func _on_exec_turn_command(pid, c):
 			ents.add_child(new_ent)
 			new_ent.position.x = c.x
 			new_ent.position.y = c.y
+
 		MOVE_ENTITIES:
 			for id in c.ents:
 				print("[ID: %d, T: %d] - move %s to x: %d, y: %d" % [Net.get_id(), manager.turn_number, id, c.x, c.y])
@@ -111,6 +140,7 @@ func _on_exec_turn_command(pid, c):
 					pass
 				else:
 					e.move_to(c.x, c.y)
+
 
 func _input(event):
 	if event is InputEvent:

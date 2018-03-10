@@ -1,7 +1,5 @@
 extends Node2D
 
-const km = preload("res://kinematic.gd")
-
 onready var coll = get_node("collision")
 
 var has_order = false

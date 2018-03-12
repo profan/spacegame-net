@@ -98,15 +98,21 @@ func _fresh_id():
 	id_counter += 1
 	return id_counter
 
+func _geometric_mean(things):
+	var total = things[0]
+	for t in range(1, things.size()):
+		total += t
+	return total / things.size()
+
 func _on_exec_turn_command(pid, c):
 
 	match c.type:
 
 		# during setup
 		CREATE_INITIAL:
-
+			
 			# set location for host's building to 0, 0
-
+			
 			var x = 0
 			var y = 0
 			if pid == 1:
@@ -118,10 +124,10 @@ func _on_exec_turn_command(pid, c):
 			var new_building = Building.instance()
 			new_building.create_building(pid, Vector2(128, 128), Vector2(x, y))
 			blds.add_child(new_building)
-
+		
 		REGISTER_OWNER:
 			owners[c.id] = c.colour
-
+		
 		# during gameplay
 		CREATE_ENTITY:
 			var new_id = _fresh_id()
@@ -131,14 +137,27 @@ func _on_exec_turn_command(pid, c):
 			ents.add_child(new_ent)
 			new_ent.position.x = c.x
 			new_ent.position.y = c.y
-
+		
 		MOVE_ENTITIES:
-			for id in c.ents:
-				print("[ID: %d, T: %d] - move %s to x: %d, y: %d" % [Net.get_id(), manager.turn_number, id, c.x, c.y])
-				var e = ents.get_node(id)
-				if c.grouped:
-					pass
-				else:
+			if c.grouped:
+				
+				# calc geo mean
+				var total = Vector2(0, 0)
+				for id in c.ents:
+					total += ents.get_node(id).position
+				var center = total / c.ents.size()
+				
+				# move em
+				for id in c.ents:
+					print("[ID: %d, T: %d] - move %s to x: %d, y: %d" % [Net.get_id(), manager.turn_number, id, c.x, c.y])
+					var e = ents.get_node(id)
+					var offset = (center - e.position)
+					e.move_to(c.x - offset.x, c.y - offset.y)
+					
+			else:
+				for id in c.ents:
+					print("[ID: %d, T: %d] - move %s to x: %d, y: %d" % [Net.get_id(), manager.turn_number, id, c.x, c.y])
+					var e = ents.get_node(id)
 					e.move_to(c.x, c.y)
 
 

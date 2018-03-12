@@ -2,7 +2,7 @@
 
 [ext_resource path="res://autoload/game.gd" type="Script" id=1]
 
-[node name="game" type="Node"]
+[node name="game" type="Node" index="0"]
 
 pause_mode = 2
 script = ExtResource( 1 )

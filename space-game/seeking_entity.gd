@@ -1,5 +1,7 @@
 extends Node2D
 
+const km = preload("res://space-game/kinematic.gd")
+
 onready var coll = get_node("collision")
 
 var has_order = false

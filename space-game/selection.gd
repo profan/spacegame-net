@@ -63,7 +63,7 @@ func _input(event):
 func _unhandled_input(event):
 	if event is InputEventMouseButton:
 		if event.is_action_pressed("unit_select"):
-			if selected_entities: 
+			if selected_entities and not modifiers:
 				_deselect_entities()
 				selected_entities.clear()
 			var mouse_pos = get_global_mouse_position()

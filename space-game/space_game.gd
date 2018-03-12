@@ -185,7 +185,6 @@ func _on_exec_turn_command(pid, c):
 		MOVE_ENTITIES_LINE:
 			
 			# average things
-			var total_segments = c.targets.size()
 			var total_mul = c.targets.size() / c.ents.size()
 			
 			for i in range(0, c.ents.size()):

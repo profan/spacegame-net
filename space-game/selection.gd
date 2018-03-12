@@ -45,6 +45,7 @@ func _on_body_entered(b):
 			b.select()
 
 func _on_body_exited(b):
+	
 	if active:
 		selected_entities.erase(b)
 		b.deselect()
@@ -105,12 +106,25 @@ func _process(delta):
 				pos_segments.append(mouse_pos)
 				update()
 
+func _deselect_non_overlapping():
+	var bodies_to_remove = []
+	for b in selected_entities:
+		if not overlaps_body(b):
+			bodies_to_remove.append(b)
+	
+	for b in bodies_to_remove:
+		selected_entities.erase(b)
+		b.deselect()
+
 func _physics_process(delta):
 	if active and Input.is_action_pressed("unit_select"):
 		end_pos = get_global_mouse_position()
 		coll.shape.extents.x = (end_pos.x - start_pos.x) / 2
 		coll.shape.extents.y = (end_pos.y - start_pos.y) / 2
 		global_position = start_pos + (end_pos - start_pos) / 2
+		
+		if selected_entities and not modifiers:
+			_deselect_non_overlapping()
 		
 		# redraw yes
 		update()

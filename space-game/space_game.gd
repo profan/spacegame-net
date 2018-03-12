@@ -18,7 +18,8 @@ enum Command {
 	REGISTER_OWNER,
 	CREATE_INITIAL,
 	CREATE_ENTITY,
-	MOVE_ENTITIES
+	MOVE_ENTITIES,
+	MOVE_ENTITIES_LINE
 }
 
 func register_owner(id, colour):
@@ -50,6 +51,13 @@ func move_entities(ents, x, y, is_grouped):
 		grouped = is_grouped
 	}
 
+func move_entities_line(ents, ts):
+	return {
+		type = Command.MOVE_ENTITIES_LINE,
+		ents = ents,
+		targets = ts
+	}
+
 # network
 var manager
 
@@ -75,6 +83,7 @@ func _ready():
 
 	# selection box stuff
 	selector.connect("on_action_perform", self, "_on_action_perform")
+	selector.connect("on_action_perform_line", self, "_on_action_perform_line")
 	# manager.send_turn_command(register_owner(Net.get_id(), "fuchsia"))
 
 func _on_manager_ready():
@@ -88,6 +97,19 @@ func _on_action_perform(modifiers, bodies, x, y):
 		ids.append(b.name)
 
 	var move_order = move_entities(ids, x, y, modifiers)
+	manager.send_turn_command(move_order, manager.turn_delay)
+
+func _on_action_perform_line(bodies, targets):
+
+	var ids = []
+	for b in bodies:
+		ids.append(b.name)
+	
+	var ts = []
+	for t in targets:
+		ts.append(t)
+
+	var move_order = move_entities_line(ids, ts)
 	manager.send_turn_command(move_order, manager.turn_delay)
 
 func _on_server_lost(session, reason):
@@ -159,6 +181,19 @@ func _on_exec_turn_command(pid, c):
 					print("[ID: %d, T: %d] - move %s to x: %d, y: %d" % [Net.get_id(), manager.turn_number, id, c.x, c.y])
 					var e = ents.get_node(id)
 					e.move_to(c.x, c.y)
+		
+		MOVE_ENTITIES_LINE:
+			
+			# average things
+			var total_segments = c.targets.size()
+			var total_mul = c.targets.size() / c.ents.size()
+			
+			for i in range(0, c.ents.size()):
+				var id = c.ents[i]
+				var t = c.targets[i * total_mul]
+				print("[ID: %d, T: %d] - move %s to x: %d, y: %d" % [Net.get_id(), manager.turn_number, id, t.x, t.y])
+				var e = ents.get_node(id)
+				e.move_to(t.x, t.y)
 
 
 func _input(event):

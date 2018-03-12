@@ -12,6 +12,12 @@ var start_pos = Vector2()
 var end_pos = Vector2()
 
 signal on_action_perform(mods, bodies, x, y)
+signal on_action_perform_line(bodies, targets)
+
+# intermediate
+var pos_clicked = Vector2()
+var pos_click_distance = 1
+var pos_segments = PoolVector2Array()
 
 # modifier state
 var modifiers
@@ -73,8 +79,31 @@ func _unhandled_input(event):
 			update() # redraw
 		elif event.is_action_pressed("unit_order"):
 			var mouse_pos = get_global_mouse_position()
-			if selected_entities:
-				emit_signal("on_action_perform", modifiers, selected_entities, mouse_pos.x, mouse_pos.y)
+			pos_clicked = mouse_pos
+		elif event.is_action_released("unit_order"):
+			var mouse_pos = get_global_mouse_position()
+			if selected_entities and pos_segments.size() > 0 and not modifiers:
+				emit_signal("on_action_perform_line", selected_entities, pos_segments)
+				pos_segments.resize(0)
+				update()
+			else:
+				if selected_entities:
+					emit_signal("on_action_perform", modifiers, selected_entities, mouse_pos.x, mouse_pos.y)
+					pos_segments.resize(0)
+					update()
+
+func _process(delta):
+	
+	if Input.is_action_pressed("unit_order") and selected_entities:
+		var mouse_pos = get_global_mouse_position()
+		if mouse_pos.distance_to(pos_clicked) > pos_click_distance:
+			if pos_segments.size() == 0:
+				pos_segments.append(pos_clicked)
+				pos_segments.append(mouse_pos)
+			elif pos_segments[pos_segments.size() - 1].distance_to(mouse_pos) > 16:
+				pos_segments.append(pos_segments[pos_segments.size() - 1])
+				pos_segments.append(mouse_pos)
+				update()
 
 func _physics_process(delta):
 	if active and Input.is_action_pressed("unit_select"):
@@ -87,8 +116,15 @@ func _physics_process(delta):
 		update()
 
 func _draw():
+	
+	var inv = get_global_transform().inverse()
+	draw_set_transform(inv.get_origin(), inv.get_rotation(), inv.get_scale())
+	
 	if active:
 		var size = end_pos - start_pos
-		var inv = get_global_transform().inverse()
-		draw_set_transform(inv.get_origin(), inv.get_rotation(), inv.get_scale())
 		draw_rect(Rect2(start_pos, size), ColorN("green", 0.25))
+	
+	if pos_segments.size() > 0:
+		for v in pos_segments:
+			draw_multiline(pos_segments, ColorN("green"))
+	

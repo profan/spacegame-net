@@ -174,6 +174,22 @@ func _on_cancel_btn():
 	SceneSwitcher.goto_scene(Game.Scenes.MAIN)
 	Game.close_session()
 
+var ping_update_ctr = 0
+var ping_update_rate = 25
+
+func _physics_process(delta):
+	ping_update_ctr +=1
+	if ping_update_ctr == ping_update_rate:
+		var session = Game.get_session()
+		session.send_pings()
+		ping_update_ctr = 0
+		_update_pings(session)
+
+func _update_pings(session):
+	for pid in session.get_players():
+		if pid != Net.get_id() and session.pings.has(pid):
+			pings.get_node(str(pid)).text = "%d ms" % (session.pings[pid].last)
+
 func _ready():
 	
 	start_btn.connect("pressed", self, "_on_start_btn")
@@ -201,6 +217,9 @@ func _ready():
 		
 	session.connect("on_player_connected", self, "_on_player_connect")
 	session.connect("on_player_disconnected", self, "_on_player_disconnect")
+	
+	# pingas
+	set_physics_process(true)
 
 # ui stuff
 func _remove_by_name(node, naem):

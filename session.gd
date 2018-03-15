@@ -2,6 +2,7 @@ extends Node
 
 var my_info = {}
 var peer_info = {}
+var pings = {}
 
 signal on_player_connected(s, player_id)
 signal on_player_disconnected(s, player_id)
@@ -46,6 +47,25 @@ remote func send_command(id, cmd):
 
 remote func send_message(id, msg):
 	emit_signal("on_player_sent_message", self, id, msg)
+
+remote func send_ping(from_id):
+	rpc_id(from_id, "respond_ping", Net.get_id())
+
+remote func respond_ping(from_id):
+	var p = pings[from_id]
+	p.recv = OS.get_ticks_msec()
+	p.last = (p.recv - p.sent)
+	p.sent = 0
+
+func send_pings():
+	for pid in peer_info:
+		if pid != Net.get_id():
+			if not pings.has(pid): 
+				pings[pid] = {sent = OS.get_ticks_msec(), recv = 0, last = -1}
+			elif pings[pid].sent == 0:
+				pings[pid].sent = OS.get_ticks_msec()
+				pings[pid].recv = 0
+			rpc_id(pid, "send_ping", Net.get_id())
 
 func _on_peer_connected(id):
 	pass

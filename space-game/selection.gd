@@ -95,7 +95,7 @@ func _unhandled_input(event):
 
 func _process(delta):
 	
-	if Input.is_action_pressed("unit_order") and selected_entities:
+	if Input.is_action_pressed("unit_order") and selected_entities and not modifiers:
 		var mouse_pos = get_global_mouse_position()
 		if mouse_pos.distance_to(pos_clicked) > pos_click_distance:
 			if pos_segments.size() == 0:

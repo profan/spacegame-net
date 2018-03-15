@@ -110,6 +110,22 @@ class DistanceSorter:
 	func sort_bodies(a, b):
 		return a.position.distance_to(first) < b.position.distance_to(first)
 
+func _find_closest_target(point, targets, matched):
+	
+	var closest = 0
+	var min_distance = targets[0].distance_to(point)
+	
+	var idx = 0
+	for t in targets:
+		if idx != closest and not matched.has(targets[idx]):
+			var dist = t.distance_to(point)
+			if dist < min_distance:
+				min_distance = dist
+				closest = idx
+		idx += 1
+	
+	return closest
+
 func _on_action_perform_line(bodies, targets):
 	
 	var sorter = DistanceSorter.new(targets[0])

@@ -99,8 +99,24 @@ func _on_action_perform(modifiers, bodies, x, y):
 	var move_order = move_entities(ids, x, y, modifiers)
 	manager.send_turn_command(move_order, manager.turn_delay)
 
-func _on_action_perform_line(bodies, targets):
 
+class DistanceSorter:
+	
+	var first
+	
+	func _init(f):
+		first = f
+	
+	func sort_bodies(a, b):
+		return a.position.distance_to(first) < b.position.distance_to(first)
+
+func _on_action_perform_line(bodies, targets):
+	
+	var sorter = DistanceSorter.new(targets[0])
+	
+	# sort bodies first
+	bodies.sort_custom(sorter, "sort_bodies")
+	
 	var ids = []
 	for b in bodies:
 		ids.append(b.name)
@@ -108,7 +124,7 @@ func _on_action_perform_line(bodies, targets):
 	var ts = []
 	for t in targets:
 		ts.append(t)
-
+	
 	var move_order = move_entities_line(ids, ts)
 	manager.send_turn_command(move_order, manager.turn_delay)
 
@@ -184,12 +200,9 @@ func _on_exec_turn_command(pid, c):
 		
 		MOVE_ENTITIES_LINE:
 			
-			# average things
-			var total_mul = c.targets.size() / c.ents.size()
-			
 			for i in range(0, c.ents.size()):
 				var id = c.ents[i]
-				var t = c.targets[i * total_mul]
+				var t = c.targets[i]
 				print("[ID: %d, T: %d] - move %s to x: %d, y: %d" % [Net.get_id(), manager.turn_number, id, t.x, t.y])
 				var e = ents.get_node(id)
 				e.move_to(t.x, t.y)

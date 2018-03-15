@@ -18,6 +18,7 @@ signal on_action_perform_line(bodies, targets)
 var pos_clicked = Vector2()
 var pos_click_distance = 1
 var pos_segments = PoolVector2Array()
+var pos_targets = []
 
 # modifier state
 var modifiers
@@ -84,7 +85,17 @@ func _unhandled_input(event):
 		elif event.is_action_released("unit_order"):
 			var mouse_pos = get_global_mouse_position()
 			if selected_entities and pos_segments.size() > 0 and not modifiers:
-				emit_signal("on_action_perform_line", selected_entities, pos_segments)
+				
+				# average things and collect only those necessary
+				var step_size = pos_segments.size() / selected_entities.size()
+				pos_targets.resize(selected_entities.size())
+				
+				var cur_step = 0
+				while cur_step < selected_entities.size():
+					pos_targets[cur_step] = pos_segments[cur_step * step_size]
+					cur_step += 1
+				
+				emit_signal("on_action_perform_line", selected_entities, pos_targets)
 				pos_segments.resize(0)
 				update()
 			else:
@@ -94,17 +105,7 @@ func _unhandled_input(event):
 					update()
 
 func _process(delta):
-	
-	if Input.is_action_pressed("unit_order") and selected_entities and not modifiers:
-		var mouse_pos = get_global_mouse_position()
-		if mouse_pos.distance_to(pos_clicked) > pos_click_distance:
-			if pos_segments.size() == 0:
-				pos_segments.append(pos_clicked)
-				pos_segments.append(mouse_pos)
-			elif pos_segments[pos_segments.size() - 1].distance_to(mouse_pos) > 16:
-				pos_segments.append(pos_segments[pos_segments.size() - 1])
-				pos_segments.append(mouse_pos)
-				update()
+	pass
 
 func _deselect_non_overlapping():
 	var bodies_to_remove = []
@@ -117,6 +118,27 @@ func _deselect_non_overlapping():
 		b.deselect()
 
 func _physics_process(delta):
+	
+	if Input.is_action_pressed("unit_order") and selected_entities and not modifiers:
+		var mouse_pos = get_global_mouse_position()
+		if mouse_pos.distance_to(pos_clicked) > pos_click_distance:
+			if pos_segments.size() == 0:
+				pos_segments.append(pos_clicked)
+				pos_segments.append(mouse_pos)
+			elif pos_segments[pos_segments.size() - 1].distance_to(mouse_pos) > 16:
+				
+				var cur_pos = pos_segments[pos_segments.size() - 1]
+				var steps = cur_pos.distance_to(mouse_pos) / 16.0
+				var cur_step = 0
+				
+				while cur_step < steps:
+					var new_seg = pos_segments[pos_segments.size() - 1].linear_interpolate(mouse_pos, cur_step / steps)
+					pos_segments.append(pos_segments[pos_segments.size() - 1])
+					pos_segments.append(new_seg)
+					cur_step += 1
+				
+				update()
+	
 	if active and Input.is_action_pressed("unit_select"):
 		end_pos = get_global_mouse_position()
 		coll.shape.extents.x = (end_pos.x - start_pos.x) / 2

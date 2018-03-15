@@ -258,7 +258,7 @@ func _register_player(id, player_info):
 	var n = player_info.nick
 	var nick = _add_label(nicks, id, n)
 	_set_nick_colour(nick, id) # colour yes
-	var ping = _add_label(pings, id, "0")
+	var ping = _add_label(pings, id, "0 ms")
 	var type = _add_label(types, id, _type_label(id))
 	var action = _add_action_button(actions, id)
 

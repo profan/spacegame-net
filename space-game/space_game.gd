@@ -19,7 +19,8 @@ enum Command {
 	CREATE_INITIAL,
 	CREATE_ENTITY,
 	MOVE_ENTITIES,
-	MOVE_ENTITIES_LINE
+	MOVE_ENTITIES_LINE,
+	DELETE_ENTITIES
 }
 
 func register_owner(id, colour):
@@ -58,6 +59,12 @@ func move_entities_line(ents, ts):
 		targets = ts
 	}
 
+func delete_entities(ents):
+	return {
+		type = Command.DELETE_ENTITIES,
+		ents = ents
+	}
+
 # network
 var manager
 
@@ -84,6 +91,7 @@ func _ready():
 	# selection box stuff
 	selector.connect("on_action_perform", self, "_on_action_perform")
 	selector.connect("on_action_perform_line", self, "_on_action_perform_line")
+	selector.connect("on_action_delete", self, "_on_action_delete")
 	# manager.send_turn_command(register_owner(Net.get_id(), "fuchsia"))
 
 func _on_manager_ready():
@@ -99,6 +107,14 @@ func _on_action_perform(modifiers, bodies, x, y):
 	var move_order = move_entities(ids, x, y, modifiers)
 	manager.send_turn_command(move_order, manager.turn_delay)
 
+func _on_action_delete(bodies):
+	
+	var ids = []
+	for b in bodies:
+		ids.append(b.name)
+		
+	var delete_order = delete_entities(ids)
+	manager.send_turn_command(delete_order, manager.turn_delay)
 
 class DistanceSorter:
 	
@@ -108,7 +124,7 @@ class DistanceSorter:
 		first = f
 	
 	func sort_bodies(a, b):
-		return a.position.distance_to(first) < b.position.distance_to(first)
+		return a.position.distance_squared_to(first) < b.position.distance_squared_to(first)
 
 func _find_closest_target(point, targets, matched):
 	
@@ -222,6 +238,14 @@ func _on_exec_turn_command(pid, c):
 				print("[ID: %d, T: %d] - move %s to x: %d, y: %d" % [Net.get_id(), manager.turn_number, id, t.x, t.y])
 				var e = ents.get_node(id)
 				e.move_to(t.x, t.y)
+		
+		DELETE_ENTITIES:
+			
+			for id in c.ents:
+				print("[ID: %d, T:%d] - deleted %s" % [Net.get_id(), manager.turn_number, id])
+				var e = ents.get_node(id)
+				ents.remove_child(e)
+				e.free()
 
 func _physics_process(delta):
 	if Input.is_action_pressed("unit_place"):

@@ -13,6 +13,7 @@ var end_pos = Vector2()
 
 signal on_action_perform(mods, bodies, x, y)
 signal on_action_perform_line(bodies, targets)
+signal on_action_delete(bodies)
 
 # intermediate
 var pos_clicked = Vector2()
@@ -61,6 +62,7 @@ func _input(event):
 			modifiers = true
 		elif event.is_action_released("unit_order_mod"):
 			modifiers = false
+			
 
 func _unhandled_input(event):
 	if event is InputEventMouseButton:
@@ -103,6 +105,12 @@ func _unhandled_input(event):
 					emit_signal("on_action_perform", modifiers, selected_entities, mouse_pos.x, mouse_pos.y)
 					pos_segments.resize(0)
 					update()
+	elif event is InputEventKey:
+		if event.is_action_released("unit_delete"):
+			if selected_entities:
+				emit_signal("on_action_delete", selected_entities)
+				selected_entities.clear()
+				update()
 
 func _process(delta):
 	pass

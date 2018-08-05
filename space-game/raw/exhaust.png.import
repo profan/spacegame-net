@@ -7,10 +7,7 @@ path="res://.import/exhaust.png-c921908ebafe70da75e92a659f999b0a.stex"
 [deps]
 
 source_file="res://space-game/raw/exhaust.png"
-source_md5="aa93b2542ff5bb0e77ca7fbae5f08e7a"
-
 dest_files=[ "res://.import/exhaust.png-c921908ebafe70da75e92a659f999b0a.stex" ]
-dest_md5="3276de5159250ae2a4d6fb15a6f27b6c"
 
 [params]
 

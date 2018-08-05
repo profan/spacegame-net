@@ -219,14 +219,14 @@ func _on_exec_turn_command(pid, c):
 				
 				# move em
 				for id in c.ents:
-					print("[ID: %d, T: %d] - move %s to x: %d, y: %d" % [Net.get_id(), manager.turn_number, id, c.x, c.y])
+					# print("[ID: %d, T: %d] - move %s to x: %d, y: %d" % [Net.get_id(), manager.turn_number, id, c.x, c.y])
 					var e = ents.get_node(id)
 					var offset = (center - e.position)
 					e.move_to(c.x - offset.x, c.y - offset.y)
 					
 			else:
 				for id in c.ents:
-					print("[ID: %d, T: %d] - move %s to x: %d, y: %d" % [Net.get_id(), manager.turn_number, id, c.x, c.y])
+					# print("[ID: %d, T: %d] - move %s to x: %d, y: %d" % [Net.get_id(), manager.turn_number, id, c.x, c.y])
 					var e = ents.get_node(id)
 					e.move_to(c.x, c.y)
 		
@@ -235,14 +235,14 @@ func _on_exec_turn_command(pid, c):
 			for i in range(0, c.ents.size()):
 				var id = c.ents[i]
 				var t = c.targets[i]
-				print("[ID: %d, T: %d] - move %s to x: %d, y: %d" % [Net.get_id(), manager.turn_number, id, t.x, t.y])
+				# print("[ID: %d, T: %d] - move %s to x: %d, y: %d" % [Net.get_id(), manager.turn_number, id, t.x, t.y])
 				var e = ents.get_node(id)
 				e.move_to(t.x, t.y)
 		
 		DELETE_ENTITIES:
 			
 			for id in c.ents:
-				print("[ID: %d, T:%d] - deleted %s" % [Net.get_id(), manager.turn_number, id])
+				# print("[ID: %d, T:%d] - deleted %s" % [Net.get_id(), manager.turn_number, id])
 				var e = ents.get_node(id)
 				ents.remove_child(e)
 				e.free()

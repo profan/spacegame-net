@@ -7,10 +7,7 @@ path="res://.import/crosshair.png-519d5d151c732f9c9e75bbb240f39d34.stex"
 [deps]
 
 source_file="res://space-game/raw/crosshair.png"
-source_md5="9f7f456626820ad67300bfbde42c7ca8"
-
 dest_files=[ "res://.import/crosshair.png-519d5d151c732f9c9e75bbb240f39d34.stex" ]
-dest_md5="9da3605067406d57c100883cd648bc9e"
 
 [params]
 

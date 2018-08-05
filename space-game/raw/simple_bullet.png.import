@@ -7,10 +7,7 @@ path="res://.import/simple_bullet.png-e583caa9f237e33fec306a168ce7fc79.stex"
 [deps]
 
 source_file="res://space-game/raw/simple_bullet.png"
-source_md5="b9171f0a2a36b1d5a7020206c462a7e2"
-
 dest_files=[ "res://.import/simple_bullet.png-e583caa9f237e33fec306a168ce7fc79.stex" ]
-dest_md5="f36c6a3ae4045e281c6d00713cd903e8"
 
 [params]
 

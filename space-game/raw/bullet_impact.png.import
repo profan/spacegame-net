@@ -7,10 +7,7 @@ path="res://.import/bullet_impact.png-c0d9408f738758dcf42b93495c6bb3b0.stex"
 [deps]
 
 source_file="res://space-game/raw/bullet_impact.png"
-source_md5="8d770d832010724dc5efbf822aedcd08"
-
 dest_files=[ "res://.import/bullet_impact.png-c0d9408f738758dcf42b93495c6bb3b0.stex" ]
-dest_md5="f6d922ab9c781d0773706449e19e0aaa"
 
 [params]
 

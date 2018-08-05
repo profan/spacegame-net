@@ -7,10 +7,7 @@ path="res://.import/laser_start.png-a66d586fe3e76b0e54ff2ce23459fc1c.stex"
 [deps]
 
 source_file="res://space-game/raw/laser_start.png"
-source_md5="b25529cb31b6d431b4979acd14672bea"
-
 dest_files=[ "res://.import/laser_start.png-a66d586fe3e76b0e54ff2ce23459fc1c.stex" ]
-dest_md5="8d3b82b8062898942a59fd44fc204c1c"
 
 [params]
 

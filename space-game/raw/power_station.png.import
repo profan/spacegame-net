@@ -7,10 +7,7 @@ path="res://.import/power_station.png-3ab3dadb448956b086dbeebb0b4b4613.stex"
 [deps]
 
 source_file="res://space-game/raw/power_station.png"
-source_md5="033d0e48263359cfcbbad7b0d680b90b"
-
 dest_files=[ "res://.import/power_station.png-3ab3dadb448956b086dbeebb0b4b4613.stex" ]
-dest_md5="38a3a2a0495bb1cb0441f15ddb057a48"
 
 [params]
 

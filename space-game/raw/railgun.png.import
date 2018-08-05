@@ -7,10 +7,7 @@ path="res://.import/railgun.png-2636379b73de45ecabaf7dc3eb1f8778.stex"
 [deps]
 
 source_file="res://space-game/raw/railgun.png"
-source_md5="a424fe7869376b422f5183debd1ef98a"
-
 dest_files=[ "res://.import/railgun.png-2636379b73de45ecabaf7dc3eb1f8778.stex" ]
-dest_md5="b5029fb8dd92381d5cdcc29e6884b7ef"
 
 [params]
 

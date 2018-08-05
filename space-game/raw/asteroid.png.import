@@ -7,10 +7,7 @@ path="res://.import/asteroid.png-95ed3f76a2fdcd56cf77d08132913775.stex"
 [deps]
 
 source_file="res://space-game/raw/asteroid.png"
-source_md5="51889a8d0cbcd9263b1c49da6301f113"
-
 dest_files=[ "res://.import/asteroid.png-95ed3f76a2fdcd56cf77d08132913775.stex" ]
-dest_md5="7e0d0d701e4a510d4ff47a8c4acb6033"
 
 [params]
 

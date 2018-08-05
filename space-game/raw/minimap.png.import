@@ -7,10 +7,7 @@ path="res://.import/minimap.png-edcf4e5b0f0fbf0864aa587794268b54.stex"
 [deps]
 
 source_file="res://space-game/raw/minimap.png"
-source_md5="b58cc03850dea5d93823d8d4149a83d5"
-
 dest_files=[ "res://.import/minimap.png-edcf4e5b0f0fbf0864aa587794268b54.stex" ]
-dest_md5="fdb35889d3a770f0598f759c2d8eb87e"
 
 [params]
 

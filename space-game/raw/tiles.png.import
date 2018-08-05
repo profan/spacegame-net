@@ -7,10 +7,7 @@ path="res://.import/tiles.png-22b1638323dd96fe9f03f73ac8b1c94c.stex"
 [deps]
 
 source_file="res://space-game/raw/tiles.png"
-source_md5="da44b1de9c944d547ccfb7c30fdb1bbf"
-
 dest_files=[ "res://.import/tiles.png-22b1638323dd96fe9f03f73ac8b1c94c.stex" ]
-dest_md5="990c37076f171b0a22d58c4852270a1d"
 
 [params]
 

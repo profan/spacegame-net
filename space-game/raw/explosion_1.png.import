@@ -7,10 +7,7 @@ path="res://.import/explosion_1.png-5f37eb2b17b2619b68ee802473b66e58.stex"
 [deps]
 
 source_file="res://space-game/raw/explosion_1.png"
-source_md5="95057594dadc9233e63c0ace0c460321"
-
 dest_files=[ "res://.import/explosion_1.png-5f37eb2b17b2619b68ee802473b66e58.stex" ]
-dest_md5="3a1aec0f9ca3c266150163aa4d17797e"
 
 [params]
 

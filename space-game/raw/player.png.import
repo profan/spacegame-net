@@ -7,10 +7,7 @@ path="res://.import/player.png-cc15c504f77aa3d1831862a864c3e869.stex"
 [deps]
 
 source_file="res://space-game/raw/player.png"
-source_md5="064d14ca4724b63269ccd8102fd30e90"
-
 dest_files=[ "res://.import/player.png-cc15c504f77aa3d1831862a864c3e869.stex" ]
-dest_md5="b29722e4a4459b1985651a86ae306613"
 
 [params]
 
